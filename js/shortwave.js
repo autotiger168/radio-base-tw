@@ -22,7 +22,7 @@ export class ShortwavePage {
     this.mode = "now";           // "now" | "pick"
     this.pickHour = new Date().getHours();
     this.pickDay = ((new Date().getDay() + 6) % 7) + 1;
-    this.filters = { band: "", lang: "", q: "", min: 2 };
+    this.filters = { band: "", lang: "", q: "", min: 2, util: false };
     this.page = 0;
     this.render();
     this.load();
@@ -70,15 +70,24 @@ export class ShortwavePage {
         this.dir = rows.slice(1).map(r => ({
           key: (r[0] || "").trim().toLowerCase(), zh: r[1], website: r[2], stream: r[3], rb: r[4], note: r[5],
         })).filter(d => d.key);
+        this._lk = null;   // 資料表讀到了：清掉之前「找不到」的比對快取
         if (this.data) this.refresh();
         return;
       } catch {}
     }
   }
 
+  // 用「完整字詞」比對：避免 "China National Radio 1" 誤配到 "China National Radio 13"
   lookup(stationName) {
+    this._lk ||= new Map();
+    if (this._lk.has(stationName)) return this._lk.get(stationName);
     const n = stationName.toLowerCase();
-    return this.dir.find(d => n.includes(d.key)) || null;
+    const hit = this.dir.find(d => {
+      d.re ||= new RegExp(`(^|[^a-z0-9])${d.key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}($|[^a-z0-9])`);
+      return d.re.test(n);
+    }) || null;
+    this._lk.set(stationName, hit);
+    return hit;
   }
 
   async loadSolar() {
@@ -117,6 +126,7 @@ export class ShortwavePage {
 
   passesFilters(row, { ignoreBand = false } = {}) {
     const f = this.filters;
+    if (!f.util && isUtility(this.data.stations[row[4]], row[5])) return false;
     if (!ignoreBand && f.band && bandOf(row[0]) !== f.band) return false;
     if (f.lang && row[5] !== f.lang) return false;
     if (f.q) {
@@ -170,6 +180,7 @@ export class ShortwavePage {
             ${[0, 1, 2, 3, 4].map(n => `<option value="${n}" ${n === 2 ? "selected" : ""}>${n ? "★".repeat(n) + " 以上" : "全部"}</option>`).join("")}
           </select></label>
           <input class="sw-q" type="search" placeholder="搜尋電台或頻率…" aria-label="搜尋短波電台">
+          <label class="chk" title="氣象傳真、航空氣象、海岸電台、HFDL、數字台、干擾台、DRM 數位廣播：一般收音機聽到的是雜訊或嗶聲，也沒有網路串流"><input type="checkbox" class="sw-util"> 顯示非廣播信號</label>
         </div>
 
         <div class="sw-grid">
@@ -230,6 +241,7 @@ export class ShortwavePage {
     this.$(".sw-lang").addEventListener("change", e => { this.filters.lang = e.target.value; this.page = 0; this.refresh(); });
     this.$(".sw-min").addEventListener("change", e => { this.filters.min = +e.target.value; this.page = 0; this.refresh(); });
     this.$(".sw-q").addEventListener("input", e => { this.filters.q = e.target.value.trim().toLowerCase(); this.page = 0; this.refresh(); });
+    this.$(".sw-util").addEventListener("change", e => { this.filters.util = e.target.checked; this.page = 0; this.refresh(); });
     this.renderKiwiList();
   }
 
@@ -285,8 +297,14 @@ export class ShortwavePage {
   rowActions(row) {
     const e = this.entry(row);
     const kiwi = receivers()[0];
+    const util = isUtility(this.data.stations[row[4]], row[5]);
+    const listen = util
+      ? `<span class="sw-tag" title="不是廣播節目，沒有網路串流">非廣播</span>`
+      : this.canStream(row)
+        ? `<button class="mini sw-listen" data-k="${esc(e.id)}" title="收聽電台的網路串流（內容可能與短波節目不同）">▶ 線上</button>`
+        : `<button class="mini sw-listen muted" data-k="${esc(e.id)}" title="這個電台沒有網路串流，可用 📡 KiwiSDR 收聽真實電波">無串流</button>`;
     return `
-      <button class="mini sw-listen" data-k="${esc(e.id)}" title="${this.canStream(row) ? "收聽電台的網路串流" : "嘗試搜尋網路串流"}">▶${this.canStream(row) ? " 線上" : ""}</button>
+      ${listen}
       ${kiwi ? `<a class="mini" href="${esc(kiwiUrl(kiwi.url, row[0]))}" target="_blank" rel="noopener" title="用 ${esc(kiwi.name)} 收聽 ${row[0]} kHz">📡</a>` : ""}
       ${e.website ? `<a class="mini" href="${esc(e.website)}" target="_blank" rel="noopener" title="官網">🌐</a>` : ""}`;
   }
@@ -471,6 +489,13 @@ const loadOwn = () => { try { return JSON.parse(localStorage.getItem(OWN)) || []
 const saveOwn = l => { try { localStorage.setItem(OWN, JSON.stringify(l)); } catch {} };
 export function receivers() {
   return [...loadOwn().map(k => ({ ...k, own: true })), ...(CONFIG.KIWISDR_RECEIVERS || [])];
+}
+
+// 非廣播信號：氣象傳真、航空氣象、海岸電台、HFDL、標準時間以外的公用電台、數字台、干擾台、DRM 數位
+const UTIL_RE = /fax|volmet|hfdl|meteo|channel marker|spy numbers|jammer|firedrake|noise|digital|radio x[a-z]{1,2}\b|^x[a-z]{2} |^hl[a-z] |^j[a-z]{2} |seoul radio|propag|marine r|coast|meterolog|^v\d\d |^s\d\d |filler music|^c\.m\.obrecht|radio darc|hai phong|ho chi minh city r|da nang radio|nha trang radio|vung tau|ben thuy|mong cai|phan rang|phan tiet|can tho radio|kien giang|quy nhon|hue radio|hon gai|phu yen|ca mau radio|duyen hai|tokyo radio|central weather bureau/i;
+export function isUtility(name, lang) {
+  if (/^-(?!TS)/.test(lang || "")) return true;   // EiBi 以「-」開頭的語言碼是非語音信號（報時 -TS 除外）
+  return UTIL_RE.test(name || "");
 }
 
 export function kiwiUrl(base, khz) {

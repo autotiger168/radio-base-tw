@@ -1,27 +1,65 @@
 比對關鍵字,中文名,官網,串流網址,串流搜尋名,備註
-Radio Taiwan,中央廣播電臺 RTI,https://www.rti.org.tw,,Radio Taiwan International,台灣的國際廣播電台
-NHK,NHK World Radio Japan,https://www3.nhk.or.jp/nhkworld/,,NHK World,日本放送協會國際廣播
-KBS,KBS World Radio,https://world.kbs.co.kr,,KBS World Radio,韓國放送公社國際廣播
-China Radio Int,中國國際廣播電台 CRI,,,China Radio International,
-China National Radio,中央人民廣播電台 CNR,,,China National Radio,
-Voice of America,美國之音 VOA,https://www.voanews.com,,Voice of America,
-Radio Free Asia,自由亞洲電台 RFA,https://www.rfa.org,,Radio Free Asia,
-BBC,BBC World Service,https://www.bbc.co.uk/worldserviceradio,,BBC World Service,
-Vatican,梵蒂岡電台,https://www.vaticannews.va,,Vatican Radio,
-Voice of Vietnam,越南之聲 VOV,https://vovworld.vn,,Voice of Vietnam,
-Radio Thailand,泰國國家廣播電台,,,Radio Thailand,
-Voice of Mongolia,蒙古之聲,,,Voice of Mongolia,
-Radio Nikkei,日經電台 Radio NIKKEI,https://www.radionikkei.jp,,Radio Nikkei,日本國內短波商業電台
-Shiokaze,潮風（しおかぜ）,,,,日本對北韓廣播（特定失蹤者問題調查會）
-Furusato,ふるさとの風,,,,日本政府對北韓廣播
-Sound of Hope,希望之聲,,,Sound of Hope,
-Trans World Radio,環球廣播 TWR,https://www.twr.org,,Trans World Radio,
-FEBC,遠東廣播 FEBC,https://www.febc.org,,FEBC,
-Deutsche Welle,德國之聲 DW,https://www.dw.com,,Deutsche Welle,
-Radio France Int,法國國際廣播電台 RFI,https://www.rfi.fr,,RFI,
-Voice of Korea,朝鮮之聲,,,,北韓官方國際廣播
-KTWR,環球廣播 關島台 KTWR,https://www.twr.org,,,
-WWV,WWV 美國標準時間電台,https://www.nist.gov/time-distribution/radio-station-wwv,,,美國國家標準與技術研究院報時台
-All India Radio,印度全印廣播電台,,,All India Radio,
-Radio Australia,澳洲廣播電台,,,ABC Radio Australia,
-Radio New Zealand,紐西蘭國際廣播電台,https://www.rnz.co.nz/international,,RNZ Pacific,
+Radio Taiwan,中央廣播電臺 RTI,https://www.rti.org.tw,https://streamak0138.akamaized.net/live0138lh-mbm9/_definst_/rti3/chunklist.m3u8,,台灣的國際廣播電台；網路串流為央廣華語頻道
+Fu Hsing,復興廣播電臺,,,,僅短波／中波，無網路串流
+China National Radio 1,中央人民廣播電台 中國之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxzgzs/playlist.m3u8,,
+CNR1,中央人民廣播電台 中國之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxzgzs/playlist.m3u8,,
+China National Radio 2,中央人民廣播電台 經濟之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxjjzs/playlist.m3u8,,
+CNR 2,中央人民廣播電台 經濟之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxjjzs/playlist.m3u8,,
+China National Radio 5,中央人民廣播電台 台海之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxzhzs/playlist.m3u8,,對台廣播
+CNR5,中央人民廣播電台 台海之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxzhzs/playlist.m3u8,,對台廣播
+China National Radio 6,中央人民廣播電台 神州之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxszzs/playlist.m3u8,,對台廣播（閩南語、客語）
+CNR 6,中央人民廣播電台 神州之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxszzs/playlist.m3u8,,對台廣播（閩南語、客語）
+China National Radio 7,中央人民廣播電台 大灣區之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxhxzs/playlist.m3u8,,原華夏之聲
+CNR 7,中央人民廣播電台 大灣區之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxhxzs/playlist.m3u8,,原華夏之聲
+China National Radio 8,中央人民廣播電台 民族之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxmzzs/playlist.m3u8,,少數民族語言
+CNR 8,中央人民廣播電台 民族之聲,https://www.cnr.cn,https://satellitepull.cnr.cn/live/wxmzzs/playlist.m3u8,,少數民族語言
+China National Radio 11,中央人民廣播電台 藏語廣播,https://www.cnr.cn,,,目前沒有可用的網路串流
+China National Radio 13,中央人民廣播電台 維吾爾語廣播,https://www.cnr.cn,,,目前沒有可用的網路串流
+China National Radio 17,中央人民廣播電台 哈薩克語廣播,https://www.cnr.cn,,,目前沒有可用的網路串流
+China National Radio,中央人民廣播電台,https://www.cnr.cn,,,這個頻道目前沒有對應的網路串流
+China Radio Int,中國國際廣播電台 CRI,https://www.cri.cn,https://sk.cri.cn/905.m3u8,,網路串流為 CRI 環球資訊廣播（北京 FM90.5），內容與短波外語節目不同
+Voice of Strait,海峽之聲廣播電台,,https://lhttp.qtfm.cn/live/1744/64k.mp3,,對台廣播
+China Huayi,中國華藝廣播公司,,https://lhttp.qtfm.cn/live/20500139/64k.mp3,,對台廣播
+Voice of Jinling,金陵之聲,,https://lhttp.qtfm.cn/live/5056/64k.mp3,,南京對台廣播
+Beibu Bay,北部灣之聲,,https://lhttp.qtfm.cn/live/1757/64k.mp3,,廣西對東南亞廣播
+PBS Xinjiang,新疆人民廣播電台,,https://lhttp.qtfm.cn/live/1902/64k.mp3,,網路串流為新疆新聞廣播
+PBS Nei Menggu,內蒙古人民廣播電台,,https://lhttp.qtfm.cn/live/1883/64k.mp3,,網路串流為內蒙古新聞綜合廣播
+PBS Yunnan,雲南人民廣播電台 民族廣播,,https://lhttp.qtfm.cn/live/1933/64k.mp3,,
+Sichuan Ethnic,四川民族廣播,,https://lhttp.qtfm.cn/live/1115/64k.mp3,,
+Xizang,西藏人民廣播電台,,,,目前沒有可用的網路串流
+PBS Qinghai,青海人民廣播電台,,,,目前沒有可用的網路串流
+Sound of Hope,希望之聲,https://www.soundofhope.org,https://livecast1.soundofhope.org/bayvoice,,網路串流為希望之聲北美華語台，內容與短波節目不同
+NHK,NHK World Radio Japan,https://www3.nhk.or.jp/nhkworld/,https://nhkworld-radio.nhkworld.jp/hls/live/nhkworld-radio-media2/index.m3u8,,日本放送協會國際廣播
+Radio Nikkei,日經電台 Radio NIKKEI,https://www.radionikkei.jp,,,網路收聽只限日本境內（radiko）
+Shiokaze,潮風（しおかぜ）,https://www.chosa-kai.jp,,,日本對北韓廣播；僅短波，無網路串流
+Furusato no Kaze,ふるさとの風,,,,日本政府對北韓廣播；僅短波，無網路串流
+Nippon no Kaze,日本の風,,,,日本政府對北韓廣播；僅短波，無網路串流
+KBS,KBS World Radio,https://world.kbs.co.kr,,,可到官網線上收聽
+Voice of Korea,朝鮮之聲,,https://listen7.myradio24.com/69366,,北韓官方國際廣播；串流為網友轉播
+Voice of America,美國之音 VOA,https://www.voachinese.com,https://voa-ingest.akamaized.net/hls/live/2035206/151_124L/playlist.m3u8,,網路串流為美國之音中文廣播
+Radio Free Asia,自由亞洲電台 RFA,https://www.rfa.org,,,目前沒有可用的網路串流
+BBC,BBC World Service,https://www.bbc.co.uk/worldserviceradio,https://stream.live.vc.bbcmedia.co.uk/bbc_world_service,,英語
+Radio France Int,法國國際廣播電台 RFI,https://www.rfi.fr/cn/,https://rfienchinois64k.ice.infomaniak.ch/rfienchinois-64.mp3,,網路串流為 RFI 華語
+Deutsche Welle,德國之聲 DW,https://www.dw.com,https://dw.audiostream.io/dw/1027/mp3/64/dw08,,
+Radio Romania,羅馬尼亞國際廣播電台,https://www.rri.ro,http://stream2.srr.ro:8052/;,,
+Radio Vatican,梵蒂岡電台,https://www.vaticannews.va,https://radio.vaticannews.va/stream-it,,網路串流為義大利語台
+Radio Vaticana,梵蒂岡電台,https://www.vaticannews.va,https://radio.vaticannews.va/stream-it,,網路串流為義大利語台
+Voice of Vietnam,越南之聲 VOV,https://vovworld.vn,https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8,,網路串流為 VOV 越南語
+Radio Australia,澳洲廣播電台,https://www.abc.net.au/pacific,https://streaming.abc-cdn.net.au/audio/hls/raeng.m3u8?source=web,,
+Radio New Zealand,紐西蘭國際廣播電台,https://www.rnz.co.nz/international,http://radionz-ice.streamguys.com/international.mp3,,
+All India Radio,印度全印廣播電台,https://newsonair.gov.in,,,目前沒有可用的網路串流
+AIR,印度全印廣播電台,https://newsonair.gov.in,,,目前沒有可用的網路串流
+Liangyou,良友電台,https://www.liangyou.net,https://c23.radioboss.fm/stream/194,,網路串流為良友電台同行頻道
+FEBC,遠東廣播 FEBC,https://www.febc.org,,,目前沒有可用的網路串流
+Trans World Radio,環球廣播 TWR,https://www.twr.org,,,目前沒有可用的網路串流
+KTWR,環球廣播 關島台,https://www.twr.org,,,目前沒有可用的網路串流
+Adventist World Radio,復臨宗國際廣播 AWR,https://awr.org,,,目前沒有可用的網路串流
+KNLS,KNLS 新生命電台,https://www.knls.org,,,目前沒有可用的網路串流
+Voice of Mongolia,蒙古之聲,,,,目前沒有可用的網路串流
+Voice of Tibet,西藏之聲,https://www.vot.org,,,目前沒有可用的網路串流
+Voice of Turkey,土耳其之聲,https://www.trtvotworld.com,,,目前沒有可用的網路串流
+Myanma Radio,緬甸廣播電台,,,,目前沒有可用的網路串流
+Radio Thailand,泰國國家廣播電台,,,,目前沒有可用的網路串流
+Reach Beyond,Reach Beyond 澳洲台,,,,目前沒有可用的網路串流
+WWV,WWV 美國標準時間電台,https://www.nist.gov/time-distribution/radio-station-wwv,,,報時訊號，沒有網路串流
+BPM,BPM 中國國家授時中心,,,,報時訊號，沒有網路串流

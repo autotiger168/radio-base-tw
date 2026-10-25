@@ -669,3 +669,9 @@ body[data-tab="dxlog"] .dock .info { flex: 1; min-width: 0; }
 .st-freq.sw { color: #d0601c; }
 .info-freq.net { color: #7a5bb5; }
 .info-freq.net b { font-size: 22px; }
+
+/* 短波：沒有串流、非廣播信號 */
+.sw-listen.muted { color: var(--ink-2); border-style: dashed; }
+.sw-tag { font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+.sw-controls .chk { display: flex; align-items: center; gap: 4px; }
+.sw-controls .chk input { accent-color: #d0601c; }
