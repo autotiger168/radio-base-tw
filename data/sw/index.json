@@ -2,13 +2,13 @@
   "current": "b26",
   "currentStart": "2026-10-25",
   "currentEnd": "2027-03-28",
-  "updated": "2026-10-25T13:13:26.621Z",
+  "updated": "2026-10-25T19:41:59.104Z",
   "seasons": [
     {
       "code": "a26",
       "season": "A26",
       "count": 8585,
-      "generated": "2026-10-25T13:13:25.016Z"
+      "generated": "2026-10-25T19:41:57.539Z"
     }
   ]
 }
