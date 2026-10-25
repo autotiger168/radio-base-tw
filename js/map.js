@@ -22,10 +22,10 @@ export class StationMap {
   }
 
   icon(s, active) {
-    const cls = ["pin", s.band === "AM" ? "pin-am" : "pin-fm", s.stream ? "pin-stream" : "", active ? "pin-active" : ""].join(" ");
+    const cls = ["pin", s.band === "AM" ? "pin-am" : s.band === "NET" ? "pin-net" : "pin-fm", s.stream ? "pin-stream" : "", active ? "pin-active" : ""].join(" ");
     return L.divIcon({
       className: "",
-      html: `<div class="${cls}"><span>${s.band === "AM" ? Math.round(s.freq) : s.freq.toFixed(1)}</span></div>`,
+      html: `<div class="${cls}"><span>${s.band === "NET" ? "網路" : s.band === "AM" ? Math.round(s.freq) : s.freq.toFixed(1)}</span></div>`,
       iconSize: [46, 22],
       iconAnchor: [23, 22],
     });
@@ -62,6 +62,12 @@ export class StationMap {
     const it = this.markers.get(s.id);
     if (it && this.layer.zoomToShowLayer) { this.layer.zoomToShowLayer(it.m); return; }
     if (!isNaN(s.lat)) this.map.flyTo([s.lat, s.lng], Math.max(this.map.getZoom(), 10), { duration: 0.8 });
+  }
+
+  // 讓地圖顯示目前篩選出來的所有電台
+  fit() {
+    const pts = [...this.markers.values()].map(({ s }) => [s.lat, s.lng]);
+    if (pts.length) this.map.fitBounds(pts, { padding: [30, 30], maxZoom: 11 });
   }
 
   invalidate() { setTimeout(() => this.map.invalidateSize(), 60); }

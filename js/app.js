@@ -2,7 +2,7 @@
 //  台灣電波地圖 Radio Base TW — 主程式
 // =============================================================
 import { CONFIG } from "./config.js";
-import { loadStations, formatFreq } from "./data.js";
+import { loadStations, formatFreq, freqLabel } from "./data.js";
 import { AudioEngine, findStreams } from "./audio-engine.js";
 import { RadioUI } from "./radio-ui.js";
 import { StationMap } from "./map.js";
@@ -98,7 +98,14 @@ let radio, map, sw, dx, scheduler;
 function buildFilters() {
   const uniq = k => [...new Set(state.stations.map(s => s[k]).filter(Boolean))];
   const fill = (sel, vals) => { sel.innerHTML = `<option value="">全部</option>` + vals.map(v => `<option>${esc(v)}</option>`).join(""); };
-  fill($("#f-region"), ["北部", "中部", "南部", "東部", "離島"].filter(r => uniq("region").includes(r)));
+  fill($("#f-region"), ["北部", "中部", "南部", "東部", "離島", "大陸"].filter(r => uniq("region").includes(r)));
+  // 縣市選單跟著地區變：選「大陸」時只列省份
+  $("#f-region").addEventListener("change", () => {
+    const r = $("#f-region").value;
+    const counties = [...new Set(state.stations.filter(s => !r || s.region === r).map(s => s.county).filter(Boolean))];
+    fill($("#f-county"), counties);
+    applyFilters();
+  });
   fill($("#f-county"), uniq("county"));
   fill($("#f-genre"), uniq("genre"));
   ["#f-q", "#f-band", "#f-region", "#f-county", "#f-genre", "#f-verified"].forEach(id =>
@@ -117,6 +124,8 @@ function applyFilters() {
     (!verified || s.verified));
   $("#count").textContent = `${state.filtered.length} 個電台`;
   map.show(state.filtered, state.current?.id);
+  const scope = `${region}|${county}`;
+  if (scope !== state.lastScope) { state.lastScope = scope; if (region || county) map.fit(); else map.map.setView(CONFIG.MAP_CENTER, CONFIG.MAP_ZOOM); }
   renderList();
 }
 
@@ -129,7 +138,7 @@ function renderList() {
         <b>${esc(s.name)}</b>
         <small>${esc(s.county)}・${esc(s.genre || "")}${s.verified ? "" : ` <span class="tag-warn">待核對</span>`}</small>
       </div>
-      <span class="st-freq ${s.band === "AM" ? "am" : "fm"}">${s.band} ${esc(formatFreq(s))}</span>
+      <span class="st-freq ${s.band.toLowerCase()}">${esc(freqLabel(s))}</span>
     </li>`).join("") || `<li class="empty">沒有符合條件的電台</li>`;
   $("#station-list").querySelectorAll(".st").forEach(li => {
     const s = state.stations.find(x => x.id === li.dataset.id);
@@ -199,7 +208,7 @@ function linkBtn(href, label, cls = "") {
 function renderInfo(s) {
   const box = $("#info");
   if (!s) {
-    box.innerHTML = `<div class="info-empty"><b>點地圖上的電台，或轉動收音機的調台旋鈕</b><span>藍色是 FM、橘色是 AM；有綠點的代表試算表裡已填好串流網址。</span></div>`;
+    box.innerHTML = `<div class="info-empty"><b>點地圖上的電台，或轉動收音機的調台旋鈕</b><span>藍色是 FM、橘色是 AM、紫色是網路台；有綠點的代表已填好串流網址。地區選「大陸」可看中國大陸各省電台。</span></div>`;
     return;
   }
   const q = encodeURIComponent(s.name.replace(/\s+(台北|台中|高雄|中部|南部|宜蘭|竹苗)$/, ""));
@@ -223,7 +232,7 @@ function renderInfo(s) {
         <h2>${esc(s.name)}</h2>
         <p>${esc(s.network || "")}${s.network ? "・" : ""}${esc(s.county)}・${esc(s.genre || "")}</p>
       </div>
-      <span class="info-freq ${s.band === "AM" ? "am" : s.band === "SW" ? "sw" : "fm"}">${s.band}<b>${esc(formatFreq(s).split(" ")[0])}</b><small>${esc(formatFreq(s).split(" ")[1])}</small></span>
+      <span class="info-freq ${s.band.toLowerCase()}">${s.band}<b>${esc(formatFreq(s).split(" ")[0])}</b><small>${esc(formatFreq(s).split(" ")[1])}</small></span>
     </div>
     ${s.sw ? `<p class="info-note">${esc(s.sw.lang)}・對${esc(s.sw.target)}廣播・發射地 ${esc(s.sw.tx)}・台灣時間 ${swTime(s.sw.row[1])}–${swTime(s.sw.row[2])}</p>` : ""}
     ${s.note ? `<p class="info-note">${esc(s.note)}</p>` : ""}

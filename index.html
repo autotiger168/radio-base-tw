@@ -51,7 +51,7 @@
     <section id="page-map" class="tab-page">
       <div class="card filters">
         <input id="f-q" type="search" placeholder="搜尋台名、頻率、縣市…" aria-label="搜尋">
-        <label>波段 <select id="f-band"><option value="">全部</option><option>FM</option><option>AM</option></select></label>
+        <label>波段 <select id="f-band"><option value="">全部</option><option>FM</option><option>AM</option><option value="NET">網路</option></select></label>
         <label>地區 <select id="f-region"></select></label>
         <label>縣市 <select id="f-county"></select></label>
         <label>類型 <select id="f-genre"></select></label>
@@ -61,7 +61,7 @@
       <div class="map-wrap card">
         <div id="map" aria-label="台灣電台地圖"></div>
         <div class="legend">
-          <span><i class="lg fm"></i>FM</span><span><i class="lg am"></i>AM</span><span><i class="lg st"></i>已填串流</span>
+          <span><i class="lg fm"></i>FM</span><span><i class="lg am"></i>AM</span><span><i class="lg net"></i>網路台</span><span><i class="lg st"></i>已填串流</span>
         </div>
       </div>
       <ul id="station-list" class="card station-list"></ul>

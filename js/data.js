@@ -40,6 +40,7 @@ function toStations(rows) {
     s.id = s.id || String(idx + 1);
     s.band = (s.band || "FM").toUpperCase();
     s.freq = parseFloat(s.freq);
+    if (s.band === "NET" && isNaN(s.freq)) s.freq = 0;   // 網路台（沒有無線頻率）
     s.lat = parseFloat(s.lat);
     s.lng = parseFloat(s.lng);
     s.preset = s.preset ? parseInt(s.preset, 10) : null;
@@ -65,7 +66,13 @@ export async function loadStations() {
   return { stations: [], source: "無" };
 }
 
+// 清單、標籤用的簡短頻率文字
+export function freqLabel(s) {
+  return s.band === "NET" ? "網路收聽" : `${s.band} ${formatFreq(s)}`;
+}
+
 export function formatFreq(s) {
+  if (s.band === "NET") return "網路 收聽";
   if (s.band === "SW") return `${Math.round(s.freq)} kHz`;
   return s.band === "AM" ? `${Math.round(s.freq)} kHz` : `${s.freq.toFixed(1)} MHz`;
 }

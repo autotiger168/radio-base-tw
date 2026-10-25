@@ -19,7 +19,7 @@ const PREF = "rbtw:dxdefaults";
 
 const twDate = iso => new Date(iso).toLocaleString("zh-TW", { hour12: false, timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
 const utcHM = iso => new Date(iso).toISOString().slice(11, 16);
-const freqText = l => l.band === "FM" ? `${(+l.freq).toFixed(1)} MHz` : `${Math.round(l.freq)} kHz`;
+const freqText = l => l.band === "NET" ? "網路" : l.band === "FM" ? `${(+l.freq).toFixed(1)} MHz` : `${Math.round(l.freq)} kHz`;
 
 export class DXLog {
   constructor(root, { getCurrent, onChange, toast }) {
@@ -77,7 +77,7 @@ export class DXLog {
             <input type="hidden" name="id">
             <input type="hidden" name="network">
             <label>收聽時間（台灣） <input type="datetime-local" name="when" required></label>
-            <label>波段 <select name="band"><option>SW</option><option>AM</option><option>FM</option></select></label>
+            <label>波段 <select name="band"><option>SW</option><option>AM</option><option>FM</option><option value="NET">網路</option></select></label>
             <label>頻率 <input name="freq" type="number" step="0.1" required placeholder="kHz（FM 填 MHz）"></label>
             <label class="wide">電台 <input name="station" required placeholder="例如：NHK World Radio Japan"></label>
             <label>語言 <input name="lang" placeholder="日語"></label>
@@ -102,7 +102,7 @@ export class DXLog {
         <div class="card dx-list-card">
           <div class="dx-tools">
             <input class="dx-q" type="search" placeholder="搜尋電台、頻率、筆記…" aria-label="搜尋紀錄">
-            <select class="dx-band"><option value="">全部波段</option><option>SW</option><option>AM</option><option>FM</option></select>
+            <select class="dx-band"><option value="">全部波段</option><option>SW</option><option>AM</option><option>FM</option><option value="NET">網路</option></select>
             <span class="dx-spacer"></span>
             <button class="mini dx-export-csv">匯出 CSV</button>
             <label class="mini file-btn">匯入 CSV<input type="file" accept=".csv,text/csv" class="dx-import-csv" hidden></label>

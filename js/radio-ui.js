@@ -10,13 +10,15 @@ const BANDS = {
   FM: { min: 87.5, max: 108, major: 2, minor: 0.5, unit: "MHz", scale: "FM MHz", label: v => v.toFixed(0) },
   AM: { min: 520, max: 1620, major: 100, minor: 20, unit: "kHz", scale: "AM kHz", label: v => String(v) },
   SW: { min: 2000, max: 26000, major: 2000, minor: 500, unit: "kHz", scale: "SW MHz", label: v => String(v / 1000) },
+  // 網路台沒有頻率：刻度盤上依序平均排列
+  NET: { min: 0, max: 1, major: 0.1, minor: 0.05, unit: "", scale: "NET 網路收聽", label: () => "", index: true },
 };
 const SKINS = [
   { id: "vintage", name: "1950s 真空管" },
   { id: "shortwave", name: "80s 短波機" },
   { id: "modern", name: "現代科技" },
 ];
-const REGIONS = ["全部", "北部", "中部", "南部", "東部"];
+const REGIONS = ["全部", "北部", "中部", "南部", "東部", "離島", "大陸"];
 
 const store = {
   get(k, d) { try { const v = localStorage.getItem("rbtw:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
@@ -94,6 +96,7 @@ export class RadioUI {
                   <button class="key key-band" data-band="FM">FM</button>
                   <button class="key key-band" data-band="AM">AM</button>
                   <button class="key key-band" data-band="SW" title="短波：轉台會經過「短波世界」目前可收的節目">SW</button>
+                  <button class="key key-band" data-band="NET" title="網路台：沒有無線頻率、只能線上收聽的電台">NET</button>
                   <button class="key key-rec" title="錄音 MP3">●<span>REC</span></button>
                 </div>
                 <div class="key-row presets">
@@ -196,11 +199,9 @@ export class RadioUI {
     this.el.dial.addEventListener("click", e => {
       const rect = this.el.marks.getBoundingClientRect();
       const ratio = (e.clientX - rect.left) / rect.width;
-      const b = BANDS[this.band];
-      const f = b.min + ratio * (b.max - b.min);
       const list = this.dialStations();
       if (!list.length) return;
-      const near = list.reduce((a, s) => Math.abs(s.freq - f) < Math.abs(a.freq - f) ? s : a);
+      const near = list.reduce((a, s) => Math.abs(this.pctOf(s, list) / 100 - ratio) < Math.abs(this.pctOf(a, list) / 100 - ratio) ? s : a);
       this.tune(near);
     });
   }
@@ -257,7 +258,7 @@ export class RadioUI {
     for (const s of this.getStations()) {
       if (s.band !== this.band) continue;
       if (this.band !== "SW" && this.region !== "全部" && s.region !== this.region) continue;
-      const key = `${s.freq}|${s.network || s.name}`;
+      const key = s.band === "NET" ? s.id : `${s.freq}|${s.network || s.name}`;
       const prev = seen.get(key);
       if (!prev || (!prev.stream && s.stream) || (this.current && s.id === this.current.id)) seen.set(key, s);
     }
@@ -355,8 +356,7 @@ export class RadioUI {
     this.el.num.textContent = num;
     this.el.unit.textContent = unit;
     this.el.name.textContent = s.name;
-    const b = BANDS[s.band];
-    const pct = (s.freq - b.min) / (b.max - b.min) * 100;
+    const pct = this.pctOf(s);
     this.el.needle.style.left = Math.max(0, Math.min(100, pct)) + "%";
     this.el.dial.setAttribute("aria-valuetext", `${s.name} ${formatFreq(s)}`);
     this.root.querySelectorAll(".marks i").forEach(m => m.classList.toggle("on", m.dataset.id === s.id));
@@ -375,10 +375,21 @@ export class RadioUI {
     this.el.scale.innerHTML = html;
   }
 
+  // 電台在刻度盤上的位置（%）
+  pctOf(s, list) {
+    const b = BANDS[s.band] || BANDS.FM;
+    if (b.index) {
+      list = list || this.dialStations();
+      const i = list.findIndex(x => x.id === s.id);
+      return list.length > 1 && i >= 0 ? (i / (list.length - 1)) * 100 : 50;
+    }
+    return (s.freq - b.min) / (b.max - b.min) * 100;
+  }
+
   drawMarks() {
-    const b = BANDS[this.band];
-    this.el.marks.innerHTML = this.dialStations().map(s => {
-      const pct = (s.freq - b.min) / (b.max - b.min) * 100;
+    const list = this.dialStations();
+    this.el.marks.innerHTML = list.map(s => {
+      const pct = this.pctOf(s, list);
       return `<i data-id="${s.id}" style="left:${pct}%" title="${s.name} ${formatFreq(s)}"></i>`;
     }).join("");
     this.updateDisplay();

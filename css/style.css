@@ -659,3 +659,13 @@ body[data-tab="dxlog"] .dock .info { flex: 1; min-width: 0; }
 .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
   background-color: #a3541c; color: #fff; font: 700 12px "Share Tech Mono", monospace;
 }
+
+/* 網路台（沒有無線頻率）與大陸電台 */
+.pin-net { background: #7a5bb5; }
+.pin-net::after { border-top-color: #7a5bb5; }
+.pin-net span { font-family: "Noto Sans TC", sans-serif; font-size: 10px; }
+.lg.net { background: #7a5bb5; }
+.st-freq.net { color: #7a5bb5; }
+.st-freq.sw { color: #d0601c; }
+.info-freq.net { color: #7a5bb5; }
+.info-freq.net b { font-size: 22px; }
