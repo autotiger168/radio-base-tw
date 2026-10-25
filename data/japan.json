@@ -1,0 +1,28 @@
+{
+  "title": "日本電台角落",
+  "intro": "邊聽邊學日文：從台灣收聽日本的聲音。內容可直接修改 data/japan.json。",
+  "sections": [
+    {
+      "title": "網路收聽",
+      "items": [
+        { "name": "NHK WORLD-JAPAN", "text": "NHK 的國際廣播，有日語與多種語言節目，可在官網或 App 線上收聽。", "url": "https://www3.nhk.or.jp/nhkworld/" },
+        { "name": "Radio NIKKEI", "text": "日本國內少見的短波商業電台，以財經、股市節目為主，也有網路收聽。", "url": "https://www.radionikkei.jp" },
+        { "name": "radiko（ラジコ）", "text": "日本民營電台的收聽平台。⚠ 只限日本境內使用，在台灣無法收聽，去日本旅行時可以用。", "url": "https://radiko.jp" }
+      ]
+    },
+    {
+      "title": "用短波收聽日語",
+      "items": [
+        { "name": "現在可收的日語短波節目", "text": "直接跳到「短波世界」，篩選出所有日語節目。", "action": "sw-lang-J" },
+        { "name": "潮風（しおかぜ）、ふるさとの風", "text": "日本對北韓的短波廣播，在台灣常常收得到，是日本 DXer 很熟悉的節目。", "action": "sw-search-shiokaze" }
+      ]
+    },
+    {
+      "title": "學日文的聽力素材",
+      "items": [
+        { "name": "NHK NEWS WEB EASY", "text": "NHK 給日語學習者的簡單日文新聞，漢字有假名標示，可以邊讀邊聽。", "url": "https://www3.nhk.or.jp/news/easy/" },
+        { "name": "收聽小技巧", "text": "先聽整點新聞的開頭（台呼與標題最清楚），再把聽到的單字記進 DX 日誌的「筆記」欄，慢慢累積。" }
+      ]
+    }
+  ]
+}

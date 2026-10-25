@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>台灣電波地圖</title>
+  <meta name="description" content="收音機迷的基地台：台灣電台地圖、復古收音機線上收聽、MP3 錄音。">
+  <meta name="theme-color" content="#1d1a16">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='18' width='52' height='38' rx='8' fill='%238b5a2b'/%3E%3Ccircle cx='22' cy='37' r='10' fill='%23f3e6c4'/%3E%3Crect x='36' y='28' width='16' height='6' rx='2' fill='%23ffb347'/%3E%3Cline x1='14' y1='18' x2='40' y2='4' stroke='%23333' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&family=Orbitron:wght@500;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">📻</span>
+      <div>
+        <h1>台灣電波地圖</h1>
+        <p>Radio Base TW・收音機迷的基地台</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="map" aria-selected="true">電台地圖</button>
+      <button role="tab" data-tab="shortwave" aria-selected="false">短波世界</button>
+      <button role="tab" data-tab="dxlog" aria-selected="false">DX 日誌</button>
+      <button role="tab" data-tab="recordings" aria-selected="false">錄音・鬧鐘 <span id="rec-count"></span></button>
+      <button role="tab" data-tab="more" aria-selected="false">廣播史・日本</button>
+    </nav>
+  </header>
+
+  <p id="proxy-note" class="banner" hidden>
+    尚未設定串流中繼：目前只能播放 https 串流，大部分電台無法錄音。設定方式見 README 的「步驟 2」。
+  </p>
+
+  <main>
+    <!-- 收音機常駐：切換分頁也不會斷 -->
+    <section class="dock">
+      <div id="radio"></div>
+      <aside id="info" class="card info"></aside>
+    </section>
+
+    <section id="page-map" class="tab-page">
+      <div class="card filters">
+        <input id="f-q" type="search" placeholder="搜尋台名、頻率、縣市…" aria-label="搜尋">
+        <label>波段 <select id="f-band"><option value="">全部</option><option>FM</option><option>AM</option></select></label>
+        <label>地區 <select id="f-region"></select></label>
+        <label>縣市 <select id="f-county"></select></label>
+        <label>類型 <select id="f-genre"></select></label>
+        <label class="chk"><input id="f-verified" type="checkbox"> 只看已核對</label>
+        <span id="count" class="count"></span>
+      </div>
+      <div class="map-wrap card">
+        <div id="map" aria-label="台灣電台地圖"></div>
+        <div class="legend">
+          <span><i class="lg fm"></i>FM</span><span><i class="lg am"></i>AM</span><span><i class="lg st"></i>已填串流</span>
+        </div>
+      </div>
+      <ul id="station-list" class="card station-list"></ul>
+    </section>
+
+    <section id="page-recordings" class="tab-page" hidden>
+      <div id="timers" class="card timers"></div>
+      <div class="card">
+        <h2 class="sec-title">我的錄音室</h2>
+        <p class="hint">錄音檔存在這個瀏覽器裡（換手機或清除網站資料就會消失），重要的請按「下載 MP3」保存。錄音僅供個人收聽，請勿再散布。</p>
+        <ul id="rec-list" class="rec-list"></ul>
+      </div>
+    </section>
+
+    <section id="page-dxlog" class="tab-page dx-page" hidden></section>
+    <section id="page-more" class="tab-page more-page" hidden></section>
+
+    <section id="page-shortwave" class="tab-page sw-page" hidden></section>
+  </main>
+
+  <footer class="foot">
+    <span id="data-source">讀取資料中…</span>
+    <span>地圖 © OpenStreetMap・串流配對 Radio Browser</span>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+  <div id="alarm-overlay" class="alarm-overlay" role="alertdialog" aria-label="鬧鐘" hidden>
+    <div class="al-box">
+      <div class="al-icon">⏰</div>
+      <div class="al-time"></div>
+      <div class="al-label"></div>
+      <div class="al-station"></div>
+      <div class="al-btns">
+        <button class="al-snooze">貪睡 10 分鐘</button>
+        <button class="al-keep">繼續收聽</button>
+        <button class="al-off">關掉收音機</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

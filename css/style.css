@@ -1,0 +1,655 @@
+/* =============================================================
+   台灣電波地圖 Radio Base TW
+   ============================================================= */
+:root {
+  --bg: #f4ede1;
+  --bg-2: #ebe1cf;
+  --card: #fffaf1;
+  --ink: #2a241c;
+  --ink-2: #6b5f4f;
+  --line: #ddd0b9;
+  --brand: #a3541c;
+  --fm: #2f6fb3;
+  --am: #d0751c;
+  --ok: #2f9a5a;
+  --warn: #b5651d;
+  --shadow: 0 1px 2px rgba(60, 40, 10, .08), 0 6px 20px rgba(60, 40, 10, .08);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17140f; --bg-2: #201b15; --card: #231e17; --ink: #efe6d6; --ink-2: #b2a48e;
+    --line: #3a3127; --brand: #e88a45; --fm: #6aa7ea; --am: #f0a04b; --ok: #5cc98a; --warn: #f0a04b;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17140f; --bg-2: #201b15; --card: #231e17; --ink: #efe6d6; --ink-2: #b2a48e;
+  --line: #3a3127; --brand: #e88a45; --fm: #6aa7ea; --am: #f0a04b; --ok: #5cc98a; --warn: #f0a04b;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Noto Sans TC", system-ui, -apple-system, "PingFang TC", sans-serif;
+  font-size: 15px; line-height: 1.55;
+}
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--brand); }
+[hidden] { display: none !important; }
+
+/* ---------- 頁首 ---------- */
+.top {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--bg-2);
+  position: sticky; top: 0; z-index: 1200;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { font-size: 30px; }
+.brand h1 { margin: 0; font-family: "Noto Serif TC", serif; font-weight: 900; font-size: 22px; letter-spacing: .06em; }
+.brand p { margin: 0; color: var(--ink-2); font-size: 12px; letter-spacing: .08em; }
+.tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.tabs button {
+  border: 0; background: none; padding: 7px 16px; border-radius: 999px; cursor: pointer; color: var(--ink-2); font-weight: 500;
+}
+.tabs button[aria-selected="true"] { background: var(--brand); color: #fff; }
+.banner {
+  margin: 0; padding: 9px 24px; background: color-mix(in srgb, var(--warn) 14%, var(--bg)); color: var(--ink);
+  font-size: 13px; border-bottom: 1px solid var(--line);
+}
+
+main {
+  max-width: 1440px; margin: 0 auto; padding: 20px 24px 40px;
+  display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 1fr); gap: 20px; align-items: start;
+}
+.dock { position: sticky; top: 86px; display: flex; flex-direction: column; gap: 16px; }
+.tab-page { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.sec-title { margin: 0 0 6px; font-family: "Noto Serif TC", serif; font-size: 20px; }
+.hint { color: var(--ink-2); font-size: 13px; margin: 0 0 14px; }
+
+/* ---------- 篩選、地圖、清單 ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 14px; }
+.filters input[type=search] {
+  flex: 1 1 200px; min-width: 0; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg);
+}
+.filters label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.filters select { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); max-width: 130px; }
+.filters .chk input { accent-color: var(--brand); }
+.count { margin-left: auto; font-size: 13px; color: var(--ink-2); }
+.map-wrap { position: relative; overflow: hidden; }
+#map { height: 520px; width: 100%; background: var(--bg-2); }
+.legend {
+  position: absolute; left: 12px; bottom: 12px; z-index: 500; display: flex; gap: 12px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 12px;
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.lg { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+.lg.fm { background: var(--fm); } .lg.am { background: var(--am); }
+.lg.st { background: var(--ok); border-radius: 50%; width: 9px; height: 9px; }
+
+.pin {
+  position: relative; width: 46px; height: 20px; border-radius: 6px; color: #fff; font: 700 11px/20px "Share Tech Mono", monospace;
+  text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.35); border: 1.5px solid rgba(255,255,255,.9); transition: transform .15s;
+}
+.pin::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: inherit; border-bottom: 0;
+}
+.pin-fm { background: var(--fm); border-top-color: var(--fm); }
+.pin-am { background: var(--am); }
+.pin-fm::after { border-top-color: var(--fm); } .pin-am::after { border-top-color: var(--am); }
+.pin-stream::before { content: ""; position: absolute; right: -4px; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--ok); border: 1.5px solid #fff; }
+.pin-active { transform: scale(1.3); box-shadow: 0 0 0 3px rgba(255, 180, 60, .7), 0 3px 10px rgba(0,0,0,.4); }
+.leaflet-container { font-family: inherit; }
+
+.station-list { list-style: none; margin: 0; padding: 6px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 4px; }
+.st { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.st:hover { background: var(--bg); }
+.st.on { background: color-mix(in srgb, var(--brand) 14%, transparent); }
+.st-play {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); cursor: pointer; font-size: 11px;
+}
+.st.on .st-play { background: var(--brand); color: #fff; border-color: var(--brand); }
+.st-main { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+.st-main b { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-main small { color: var(--ink-2); font-size: 12px; }
+.st-freq { font: 600 13px "Share Tech Mono", monospace; white-space: nowrap; }
+.st-freq.fm { color: var(--fm); } .st-freq.am { color: var(--am); }
+.tag-warn { color: var(--warn); border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; font-size: 11px; }
+.empty { padding: 20px; color: var(--ink-2); text-align: center; list-style: none; }
+
+/* ---------- 資訊卡 ---------- */
+.info { padding: 16px 18px; }
+.info-empty { display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); font-size: 13px; }
+.info-empty b { color: var(--ink); font-size: 15px; }
+.info-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.info-head h2 { margin: 0; font-family: "Noto Serif TC", serif; font-size: 20px; line-height: 1.3; }
+.info-head p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+.info-freq { display: flex; flex-direction: column; align-items: flex-end; font: 600 12px "Share Tech Mono", monospace; line-height: 1.1; }
+.info-freq b { font-size: 28px; }
+.info-freq.fm { color: var(--fm); } .info-freq.am { color: var(--am); }
+.info-note { margin: 10px 0 0; font-size: 13px; }
+.info-warn { margin: 8px 0 0; font-size: 12px; color: var(--warn); }
+.links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.lnk {
+  text-decoration: none; font-size: 13px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); background: var(--bg);
+}
+.lnk:hover { border-color: var(--brand); }
+.lnk.search { color: var(--ink-2); border-style: dashed; }
+.lnk.fb:not(.search) { background: #1877f2; color: #fff; border-color: #1877f2; }
+.lnk.ig:not(.search) { background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); color: #fff; border: 0; }
+.lnk.th:not(.search) { background: #111; color: #fff; border-color: #111; }
+.lnk.yt { background: #e62117; color: #fff; border-color: #e62117; }
+.stream-box { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 13px; }
+.stream-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stream-row > span { color: var(--ink-2); }
+.stream-row code { font-family: "Share Tech Mono", monospace; background: var(--bg); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+.mini {
+  font-size: 12px; padding: 3px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); cursor: pointer; text-decoration: none; color: var(--ink);
+}
+.mini:hover { border-color: var(--brand); }
+.mini.danger { color: #c0392b; }
+details { margin-top: 8px; } summary { cursor: pointer; color: var(--ink-2); }
+.cands { list-style: none; padding: 0; margin: 6px 0 0; display: flex; flex-direction: column; gap: 4px; }
+.cands small { color: var(--ink-2); }
+
+/* ---------- 錄音室 ---------- */
+.card:has(.rec-list) { padding: 18px; }
+.coming { padding: 18px; }
+.rec-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rec { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+.rec-head { display: flex; flex-direction: column; gap: 2px; }
+.rec-name { border: 0; background: none; font-weight: 600; padding: 0; width: 100%; }
+.rec-name:focus { outline: 1px dashed var(--brand); }
+.rec-head span { font-size: 12px; color: var(--ink-2); }
+.rec audio { width: 100%; height: 36px; }
+.rec-actions { display: flex; gap: 8px; }
+
+.foot { max-width: 1440px; margin: 0 auto; padding: 0 24px 30px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--ink-2); }
+.toast {
+  position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 140%); z-index: 2000;
+  background: #2a241c; color: #fff; padding: 10px 16px; border-radius: 12px; display: flex; gap: 12px; align-items: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3); transition: transform .25s, opacity .25s; opacity: 0; visibility: hidden; max-width: calc(100vw - 32px); font-size: 14px;
+}
+.toast.show { transform: translate(-50%, 0); opacity: 1; visibility: visible; }
+.toast button { border: 0; background: #ffb347; color: #2a241c; border-radius: 8px; padding: 4px 10px; cursor: pointer; font-weight: 600; }
+
+/* =============================================================
+   收音機本體（三種皮膚共用結構）
+   ============================================================= */
+.radio {
+  --cab: #6b3f1f; --cab-edge: #3e220e; --panel: #2b1a0e; --text: #f3e6c4;
+  --disp-bg: #2a1708; --disp-ink: #ffb347; --disp-glow: rgba(255, 170, 60, .55);
+  --dial-bg: #f1e2bc; --dial-ink: #2b1a0e; --needle: #c0392b;
+  --knob: #3a2210; --knob-hi: #7a4a24; --key: #f4ead2; --key-ink: #3a2210;
+  --vu-face: #f3e6c4; --vu-ink: #2b1a0e; --vu-red: #b8321f; --accent: #ffb347;
+  --disp-font: "VT323", monospace;
+  user-select: none; -webkit-user-select: none;
+}
+.cabinet {
+  position: relative; display: grid; grid-template-columns: 34% 1fr; gap: 14px; padding: 18px;
+  border-radius: 22px; background: var(--cab); border: 3px solid var(--cab-edge);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.15), inset 0 -8px 18px rgba(0,0,0,.35), 0 18px 30px rgba(30, 15, 0, .35);
+}
+.speaker {
+  position: relative; border-radius: 14px; overflow: hidden; min-height: 280px;
+  background: var(--panel); box-shadow: inset 0 3px 10px rgba(0,0,0,.6);
+}
+.grille { position: absolute; inset: 8px; border-radius: 10px; }
+.spectrum { position: absolute; left: 8px; right: 8px; bottom: 34px; width: calc(100% - 16px); height: 55%; display: none; }
+.badge {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); font: 700 10px "Orbitron", sans-serif; letter-spacing: .25em;
+  color: var(--text); opacity: .75; white-space: nowrap;
+}
+.panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* 顯示窗 */
+.display {
+  background: var(--disp-bg); color: var(--disp-ink); border-radius: 10px; padding: 8px 12px;
+  font-family: var(--disp-font); box-shadow: inset 0 2px 8px rgba(0,0,0,.6);
+  text-shadow: 0 0 6px var(--disp-glow); transition: opacity .4s, filter .4s; min-height: 118px;
+}
+.d-row { display: flex; justify-content: space-between; gap: 8px; font-size: 18px; line-height: 1.1; }
+.d-freq { display: flex; align-items: baseline; gap: 8px; line-height: 1; margin: 2px 0; }
+.d-band { font-size: 18px; opacity: .8; }
+.d-num { font-size: 46px; font-weight: 400; letter-spacing: .04em; }
+.d-unit { font-size: 16px; }
+.d-name { font-size: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+.d-bottom { font-size: 16px; opacity: .9; }
+.d-meta { text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radio[data-power="off"] .display { opacity: .25; filter: saturate(0); text-shadow: none; }
+.radio.recording .d-status { color: #ff4d4d; text-shadow: 0 0 8px rgba(255, 60, 60, .8); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .35; } }
+.radio.warming .display { animation: warm 2.2s ease-out; }
+@keyframes warm { 0% { opacity: .1; filter: brightness(.3); } 60% { opacity: .7; } 100% { opacity: 1; filter: none; } }
+
+/* 刻度盤 */
+.dial { position: relative; cursor: pointer; outline: none; }
+.dial:focus-visible .dial-glass { box-shadow: 0 0 0 3px var(--accent); }
+.dial-glass {
+  position: relative; height: 62px; border-radius: 8px; background: var(--dial-bg); overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.35);
+}
+.scale, .marks { position: absolute; left: 14px; right: 14px; top: 0; bottom: 0; }
+.tick { position: absolute; top: 6px; width: 1px; height: 8px; background: var(--dial-ink); opacity: .6; }
+.tick.major { height: 14px; opacity: 1; width: 1.5px; }
+.tick em {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%); font: 600 11px "Share Tech Mono", monospace; color: var(--dial-ink); font-style: normal;
+}
+.scale-unit { position: absolute; left: -8px; bottom: 2px; font: 600 9px "Share Tech Mono", monospace; color: var(--dial-ink); opacity: .7; }
+.marks i {
+  position: absolute; bottom: 8px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--dial-ink); opacity: .45;
+  transition: transform .2s, opacity .2s;
+}
+.marks i.on { opacity: 1; background: var(--needle); transform: scale(1.5); }
+.needle {
+  position: absolute; top: 2px; bottom: 2px; left: 0; width: 2px; margin-left: 13px; background: var(--needle);
+  box-shadow: 0 0 6px var(--needle); transition: left .7s cubic-bezier(.3, 1.3, .5, 1);
+}
+
+/* VU 表 */
+.meters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vu { width: 100%; height: 56px; border-radius: 6px; background: var(--vu-face); box-shadow: inset 0 1px 4px rgba(0,0,0,.4); }
+
+/* 控制區 */
+.controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.knob-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.knob {
+  --a: 0deg; position: relative; width: 64px; height: 64px; border-radius: 50%; cursor: grab; touch-action: none; outline: none;
+  background: radial-gradient(circle at 35% 30%, var(--knob-hi), var(--knob) 65%);
+  box-shadow: 0 4px 8px rgba(0,0,0,.5), inset 0 -3px 6px rgba(0,0,0,.4);
+  transform: rotate(var(--a));
+}
+.knob.turning { cursor: grabbing; }
+.knob:focus-visible { box-shadow: 0 0 0 3px var(--accent), 0 4px 8px rgba(0,0,0,.5); }
+.knob i { position: absolute; left: 50%; top: 6px; width: 4px; height: 16px; margin-left: -2px; border-radius: 2px; background: var(--text); }
+.knob-label { font: 700 9px "Orbitron", sans-serif; letter-spacing: .15em; color: var(--text); opacity: .8; }
+.keys { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.key-row { display: flex; gap: 5px; justify-content: center; }
+.key {
+  flex: 1; min-width: 0; height: 34px; border: 0; border-radius: 6px; cursor: pointer; background: var(--key); color: var(--key-ink);
+  font: 700 13px "Share Tech Mono", monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  box-shadow: 0 3px 0 rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.5); transition: transform .06s, box-shadow .06s;
+}
+.key span { font-size: 7px; letter-spacing: .1em; margin-top: 2px; }
+.key:active, .key.on { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,.45), inset 0 1px 3px rgba(0,0,0,.3); }
+.key.on { filter: brightness(.9); }
+.key-rec { color: #c0392b; }
+.radio.recording .key-rec { background: #c0392b; color: #fff; }
+.radio[data-power="on"] .key-power { color: #2f9a5a; }
+
+/* 皮膚切換列 */
+.radio-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--ink-2); }
+.skin-switch { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.skin-switch button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; cursor: pointer; color: var(--ink-2); font-size: 13px; }
+.skin-switch button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.region-pick select { margin-left: 4px; padding: 3px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); }
+.sfx-pick input { accent-color: var(--brand); }
+
+/* ---------- 皮膚 1：1950s 木殼真空管 ---------- */
+.radio[data-skin="vintage"] .cabinet {
+  background:
+    repeating-linear-gradient(92deg, rgba(0,0,0,.08) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(88deg, rgba(255,255,255,.04) 0 1px, transparent 1px 23px),
+    linear-gradient(180deg, #8a5329, #5e3415 70%, #4a280f);
+}
+.radio[data-skin="vintage"] .grille {
+  background:
+    repeating-linear-gradient(45deg, rgba(60,35,15,.55) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(-45deg, rgba(60,35,15,.55) 0 2px, transparent 2px 5px),
+    #d9c39a;
+  box-shadow: inset 0 0 0 3px #a87a45, inset 0 0 18px rgba(0,0,0,.45);
+}
+.radio[data-skin="vintage"] .grille::after {
+  content: ""; position: absolute; inset: 22% 18%; border-radius: 50%;
+  border: 3px solid rgba(110, 70, 30, .45); box-shadow: 0 0 0 10px rgba(110, 70, 30, .12);
+}
+.radio[data-skin="vintage"] .badge { font-family: "Noto Serif TC", serif; letter-spacing: .3em; color: #f5d9a0; }
+.radio[data-skin="vintage"] .dial-glass {
+  background: radial-gradient(ellipse at 50% 120%, #ffe7a8 0%, #f1e2bc 55%, #e2cd9b 100%);
+}
+.radio[data-skin="vintage"][data-power="on"] .dial-glass { box-shadow: inset 0 2px 6px rgba(0,0,0,.3), 0 0 18px rgba(255, 190, 90, .45); }
+.radio[data-skin="vintage"] .key { background: linear-gradient(#fffaf0, #e8dcc0); border-radius: 4px 4px 7px 7px; }
+
+/* ---------- 皮膚 2：1970–80s 銀色短波機 ---------- */
+.radio[data-skin="shortwave"] {
+  --cab: #c9ccd0; --cab-edge: #8b9096; --panel: #1b1c1e; --text: #e9ecef;
+  --disp-bg: #9fae8a; --disp-ink: #1c2416; --disp-glow: transparent;
+  --dial-bg: #111214; --dial-ink: #e9ecef; --needle: #ff7a1a;
+  --knob: #161718; --knob-hi: #4b4e52; --key: #2a2c2f; --key-ink: #e9ecef;
+  --vu-face: #e7e3d4; --vu-ink: #151515; --vu-red: #d63a1f; --accent: #ff7a1a;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="shortwave"] .cabinet {
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.18) 0 1px, rgba(0,0,0,.04) 1px 2px),
+    linear-gradient(180deg, #e3e5e8, #b8bcc1 60%, #a3a7ad);
+}
+.radio[data-skin="shortwave"] .grille {
+  background: radial-gradient(circle, #050505 1.6px, transparent 2px) 0 0 / 8px 8px, #2a2c2f;
+}
+.radio[data-skin="shortwave"] .badge { color: #ff7a1a; }
+.radio[data-skin="shortwave"] .display { border: 3px solid #2a2c2f; border-radius: 4px; }
+.radio[data-skin="shortwave"] .d-num { font-size: 40px; }
+.radio[data-skin="shortwave"] .d-name { font-size: 18px; }
+.radio[data-skin="shortwave"] .d-row { font-size: 14px; }
+.radio[data-skin="shortwave"] .knob {
+  background:
+    repeating-conic-gradient(from 0deg, #2e3033 0 6deg, #111 6deg 12deg);
+  box-shadow: 0 4px 8px rgba(0,0,0,.5), inset 0 0 0 9px #1b1c1e, inset 0 0 0 10px #555;
+}
+.radio[data-skin="shortwave"] .knob i { background: #ff7a1a; }
+.radio[data-skin="shortwave"] .knob-label, .radio[data-skin="shortwave"] .radio-label { color: #2a2c2f; }
+.radio[data-skin="shortwave"] .key { border-radius: 3px; }
+.radio[data-skin="shortwave"] .key.on { color: #ff7a1a; }
+
+/* ---------- 皮膚 3：現代科技感 ---------- */
+.radio[data-skin="modern"] {
+  --cab: #141518; --cab-edge: #2b2d33; --panel: #0b0c0e; --text: #c7d3df;
+  --disp-bg: #000; --disp-ink: #7fe3ff; --disp-glow: rgba(90, 209, 255, .55);
+  --dial-bg: #050608; --dial-ink: #8ea2b5; --needle: #5ad1ff;
+  --knob: #8f959c; --knob-hi: #e4e8ec; --key: #1d1f24; --key-ink: #c7d3df;
+  --vu-face: #5ad1ff; --vu-ink: #8ea2b5; --vu-red: #ff4d6d; --accent: #5ad1ff;
+  --disp-font: "Orbitron", sans-serif;
+}
+.radio[data-skin="modern"] .cabinet {
+  border-radius: 26px; border: 1px solid #2b2d33;
+  background: linear-gradient(160deg, #1d1f24, #0f1013);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset, 0 24px 40px rgba(0,0,0,.45);
+}
+.radio[data-skin="modern"] .grille {
+  background: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1.4px) 0 0 / 7px 7px;
+}
+.radio[data-skin="modern"] .spectrum { display: block; }
+.radio[data-skin="modern"] .badge { color: #5ad1ff; }
+.radio[data-skin="modern"] .display { border-radius: 14px; border: 1px solid #22252b; }
+.radio[data-skin="modern"] .d-num { font-size: 38px; font-weight: 500; }
+.radio[data-skin="modern"] .d-name { font-family: "Noto Sans TC", sans-serif; font-size: 17px; }
+.radio[data-skin="modern"] .d-row { font-size: 12px; letter-spacing: .08em; }
+.radio[data-skin="modern"] .dial-glass { border: 1px solid #22252b; border-radius: 12px; }
+.radio[data-skin="modern"] .tick em { color: #8ea2b5; }
+.radio[data-skin="modern"] .vu { background: transparent; box-shadow: none; }
+.radio[data-skin="modern"] .knob {
+  background: conic-gradient(from 210deg, #cfd5db, #7f858c, #e9edf1, #868c93, #cfd5db);
+  box-shadow: 0 6px 14px rgba(0,0,0,.6), inset 0 0 0 2px rgba(255,255,255,.2);
+}
+.radio[data-skin="modern"] .knob i { width: 6px; height: 6px; top: 8px; margin-left: -3px; border-radius: 50%; background: #5ad1ff; box-shadow: 0 0 8px #5ad1ff; }
+.radio[data-skin="modern"] .key {
+  background: linear-gradient(#24272d, #17191d); border: 1px solid #2f333a; box-shadow: 0 2px 0 #000; border-radius: 10px; font-family: "Orbitron", sans-serif; font-size: 11px;
+}
+.radio[data-skin="modern"] .key.on { color: #5ad1ff; box-shadow: 0 0 10px rgba(90, 209, 255, .35); }
+.radio[data-skin="modern"] .key-rec { color: #ff4d6d; }
+
+/* ---------- 響應式 ---------- */
+@media (max-width: 1080px) {
+  main { grid-template-columns: 1fr; }
+  .dock { position: static; }
+}
+@media (max-width: 640px) {
+  .top { padding: 10px 16px; position: static; }
+  .brand h1 { font-size: 19px; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; padding: 7px 6px; font-size: 13px; }
+  main { padding: 14px 16px 30px; }
+  .cabinet { grid-template-columns: 1fr; padding: 12px; }
+  .speaker { min-height: 70px; }
+  .radio[data-skin="modern"] .speaker { min-height: 110px; }
+  .spectrum { bottom: 8px; height: 70%; }
+  .badge { bottom: auto; top: 8px; }
+  .d-num { font-size: 40px; }
+  .knob { width: 54px; height: 54px; }
+  .key { height: 32px; font-size: 12px; }
+  #map { height: 420px; }
+  .station-list { grid-template-columns: 1fr; }
+  .count { margin-left: 0; }
+  .foot { padding: 0 16px 24px; }
+}
+
+/* =============================================================
+   短波世界
+   ============================================================= */
+body[data-tab="shortwave"] main { grid-template-columns: 1fr; }
+body[data-tab="shortwave"] .dock { position: static; flex-direction: row; align-items: flex-start; }
+body[data-tab="shortwave"] #radio { flex: 0 0 600px; max-width: 600px; }
+body[data-tab="shortwave"] .dock .info { flex: 1; min-width: 0; }
+.info-freq.sw { color: #d0601c; }
+.sw-page h3 { margin: 0; font-family: "Noto Serif TC", serif; font-size: 17px; }
+.sw-page h3 small { font-family: "Noto Sans TC", sans-serif; font-weight: 400; font-size: 12px; color: var(--ink-2); }
+.sw-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 16px 18px; }
+.sw-head .hint { margin: 0; }
+.sw-solar { display: flex; flex-direction: column; font-size: 13px; padding: 8px 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); max-width: 420px; }
+.sw-solar span { color: var(--ink-2); font-size: 12px; }
+.sw-setup { padding: 18px; }
+.sw-setup ol { margin: 8px 0 0; padding-left: 20px; }
+.sw-body { display: flex; flex-direction: column; gap: 14px; }
+.sw-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; font-size: 13px; color: var(--ink-2); }
+.sw-controls select, .sw-controls input[type=search] { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.sw-controls input[type=search] { flex: 1 1 180px; min-width: 0; }
+.sw-controls label { display: flex; align-items: center; gap: 6px; }
+.sw-hour { width: 160px; accent-color: #d0601c; }
+.sw-hour-out { font: 600 14px "Share Tech Mono", monospace; color: var(--ink); min-width: 44px; }
+.seg { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 4px 12px; border-radius: 999px; cursor: pointer; color: var(--ink-2); }
+.seg button[aria-pressed="true"] { background: #d0601c; color: #fff; }
+.sw-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; }
+.sw-sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 14px 16px 8px; }
+.sw-list { list-style: none; margin: 0; padding: 0 8px 10px; max-height: 470px; overflow-y: auto; }
+.sw-item { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px; border-radius: 10px; }
+.sw-item:hover { background: var(--bg); }
+.sw-freq { display: flex; flex-direction: column; font: 700 17px "Share Tech Mono", monospace; color: #d0601c; line-height: 1.1; }
+.sw-freq small { font-size: 10px; font-weight: 400; color: var(--ink-2); }
+.sw-main { min-width: 0; display: flex; flex-direction: column; }
+.sw-main b { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sw-main small { color: var(--ink-2); font-size: 12px; }
+.sw-stars { color: #e3a018; letter-spacing: 1px; font-size: 13px; white-space: nowrap; }
+.sw-act { display: flex; gap: 4px; white-space: nowrap; }
+.sw-map { height: 470px; border-radius: 0 0 var(--radius) var(--radius); }
+.sw-mapcard { overflow: hidden; }
+.sw-heat-wrap { overflow-x: auto; padding: 0 12px 14px; }
+.sw-heat { border-collapse: separate; border-spacing: 2px; font: 11px "Share Tech Mono", monospace; min-width: 720px; width: 100%; }
+.sw-heat th { color: var(--ink-2); font-weight: 400; padding: 2px; }
+.sw-heat thead th.cur { color: #d0601c; font-weight: 700; }
+.sw-heat tbody th { text-align: right; white-space: nowrap; padding-right: 6px; }
+.sw-heat tbody th small { display: block; font-size: 9px; opacity: .7; }
+.sw-heat td {
+  height: 26px; text-align: center; border-radius: 4px; cursor: pointer; color: var(--ink);
+  background: color-mix(in srgb, #d0601c calc(var(--v) * 85%), var(--bg));
+}
+.sw-heat td:hover { outline: 2px solid #d0601c; }
+.sw-heat td.cur { box-shadow: inset 0 0 0 1.5px var(--ink); }
+.sw-heat td.selband { outline: 1px dashed #d0601c; }
+.sw-table-wrap { overflow-x: auto; padding: 0 8px; }
+.sw-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 860px; }
+.sw-table th { text-align: left; font-weight: 500; color: var(--ink-2); padding: 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.sw-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sw-table td small { color: var(--ink-2); }
+.sw-table .mono { font-family: "Share Tech Mono", monospace; white-space: nowrap; }
+.sw-pager { display: flex; gap: 10px; justify-content: center; align-items: center; padding: 12px; font-size: 13px; }
+.sw-kiwi { padding: 16px 18px; }
+.sw-kiwi h3 { margin-bottom: 6px; }
+.sw-attrib { text-align: center; }
+@media (max-width: 1080px) {
+  body[data-tab="shortwave"] .dock { flex-direction: column; }
+  body[data-tab="shortwave"] #radio { flex: none; max-width: 100%; width: 100%; }
+  body[data-tab="shortwave"] .dock .info { width: 100%; }
+  .sw-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .sw-item { grid-template-columns: 62px minmax(0, 1fr); }
+  .sw-item .sw-stars, .sw-item .sw-act { grid-column: 2; }
+  .sw-map { height: 340px; }
+  .sw-hour { width: 120px; }
+}
+
+/* =============================================================
+   Phase 4：鬧鐘、DX 日誌、QSL、廣播史、日本角落
+   ============================================================= */
+body[data-tab="dxlog"] main { grid-template-columns: 1fr; }
+body[data-tab="dxlog"] .dock { position: static; flex-direction: row; align-items: flex-start; }
+body[data-tab="dxlog"] #radio { flex: 0 0 600px; max-width: 600px; }
+body[data-tab="dxlog"] .dock .info { flex: 1; min-width: 0; }
+.tabs { overflow-x: auto; scrollbar-width: none; max-width: 100%; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { white-space: nowrap; }
+.btn-primary { border: 0; background: var(--brand); color: #fff; padding: 8px 18px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.btn-primary:hover { filter: brightness(1.08); }
+.file-btn { display: inline-flex; align-items: center; cursor: pointer; }
+.nowrap { white-space: nowrap; }
+.log-btn { cursor: pointer; border-color: var(--brand) !important; color: var(--brand) !important; background: none; font: inherit; font-size: 13px; }
+.log-badge { margin-left: 6px; font-size: 11px; color: var(--brand); border: 1px solid currentColor; border-radius: 6px; padding: 0 4px; letter-spacing: 0; }
+.key-sleep { font-size: 15px; }
+.key-sleep.on { color: #7fb4ff; }
+.radio[data-skin="modern"] .key-sleep.on { color: #5ad1ff; }
+
+/* 鬧鐘 */
+.timers { padding: 18px; }
+.tm-form { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px; border: 1px dashed var(--line); border-radius: 12px; font-size: 13px; color: var(--ink-2); }
+.tm-form label { display: flex; align-items: center; gap: 6px; }
+.tm-form input, .tm-form select { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.tm-station select { max-width: 280px; }
+.tm-label input { width: 170px; }
+.tm-days { border: 0; padding: 0; margin: 0; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.tm-days legend { float: left; margin-right: 6px; padding: 0; }
+.tm-days label { gap: 2px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.tm-days input { accent-color: var(--brand); margin: 0; }
+.tm-wake { display: flex; align-items: center; gap: 6px; margin: 12px 0 4px; font-size: 13px; color: var(--ink-2); }
+.tm-wake input { accent-color: var(--brand); }
+.tm-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tm-item { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.tm-item.off { opacity: .55; }
+.tm-time { font: 700 24px "Share Tech Mono", monospace; }
+.tm-main { display: flex; flex-direction: column; min-width: 0; }
+.tm-main small { color: var(--ink-2); font-size: 12px; }
+.tm-last { font-style: italic; }
+.switch { position: relative; width: 40px; height: 22px; flex: none; cursor: pointer; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--line); transition: background .2s; }
+.switch span::after { content: ""; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.switch input:checked + span { background: var(--ok); }
+.switch input:checked + span::after { transform: translateX(18px); }
+.switch input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+.alarm-overlay { position: fixed; inset: 0; z-index: 3000; background: rgba(20, 12, 4, .72); display: grid; place-items: center; padding: 16px; }
+.al-box { background: var(--card); color: var(--ink); border-radius: 22px; padding: 28px 26px; text-align: center; width: min(420px, 100%); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.al-icon { font-size: 44px; animation: ring 1s ease-in-out infinite; }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+.al-time { font: 700 56px "Share Tech Mono", monospace; line-height: 1.1; }
+.al-label { font-family: "Noto Serif TC", serif; font-size: 20px; font-weight: 900; margin-top: 4px; }
+.al-station { color: var(--ink-2); margin-top: 4px; }
+.al-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
+.al-btns button { border: 1px solid var(--line); background: var(--bg); color: var(--ink); padding: 12px 6px; border-radius: 12px; cursor: pointer; font-weight: 600; }
+.al-btns .al-keep { background: var(--brand); color: #fff; border-color: var(--brand); }
+@media (prefers-reduced-motion: reduce) { .al-icon { animation: none; } }
+
+/* DX 日誌 */
+.dx-page { gap: 14px; }
+.dx-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px 18px; }
+.dx-head .hint { margin: 0; max-width: 620px; }
+.dx-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; box-shadow: var(--shadow); }
+.stat b { font: 700 22px "Share Tech Mono", monospace; color: var(--brand); }
+.stat span { font-size: 12px; color: var(--ink-2); }
+.dx-form-card { padding: 0; }
+.dx-form-card > summary { padding: 14px 18px; display: flex; align-items: center; gap: 12px; list-style: none; cursor: pointer; }
+.dx-form-card > summary::-webkit-details-marker { display: none; }
+.dx-form, .qsl-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 14px; padding: 0 18px 16px; font-size: 13px; color: var(--ink-2); }
+.dx-form label, .qsl-form label { display: flex; flex-direction: column; gap: 4px; }
+.dx-form .wide, .qsl-form .wide { grid-column: span 2; }
+.dx-form input, .dx-form select, .qsl-form input, .qsl-form select { padding: 7px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+.sinpo { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0; }
+.sinpo legend { padding: 0 6px; color: var(--ink); font-weight: 600; }
+.sinpo label { gap: 2px; }
+.sinpo b { font: 700 18px "Share Tech Mono", monospace; color: var(--brand); }
+.sinpo small { font-size: 11px; }
+.dx-form-actions { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; }
+#sinpo-help { padding: 0 18px 14px; margin: 0; }
+.dx-list-card { padding: 12px 8px 8px; }
+.dx-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 0 8px 10px; }
+.dx-tools input, .dx-tools select { padding: 6px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.dx-tools input { flex: 1 1 200px; min-width: 0; }
+.dx-spacer { flex: 1; }
+.dx-table-wrap { overflow-x: auto; }
+.dx-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+.dx-table th { text-align: left; font-weight: 500; color: var(--ink-2); padding: 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.dx-table td { padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.dx-table td small { color: var(--ink-2); }
+.dx-table .mono { font-family: "Share Tech Mono", monospace; white-space: nowrap; }
+.sinpo-cell { letter-spacing: 2px; }
+.sinpo-cell b { padding: 0 3px; border-radius: 4px; color: #fff; }
+.o5 { background: #2f9a5a; } .o4 { background: #6aa84f; } .o3 { background: #d0a01c; } .o2 { background: #d0751c; } .o1 { background: #c0392b; }
+.qsl-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.qsl-card { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: var(--shadow); transition: transform .15s; }
+.qsl-card:hover, .qsl-card:focus-visible { transform: translateY(-3px) rotate(-.6deg); outline: none; }
+.qsl-card img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; background: var(--bg); }
+.qsl-card figcaption { padding: 8px 10px; display: flex; flex-direction: column; }
+.qsl-card small { color: var(--ink-2); font-size: 12px; }
+.lightbox { position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.82); display: grid; place-items: center; padding: 16px; }
+.lb-inner { max-width: min(1000px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.lb-inner img { max-width: 100%; max-height: 78vh; object-fit: contain; border-radius: 8px; background: #222; }
+.lb-bar { display: flex; gap: 8px; align-items: center; color: #fff; flex-wrap: wrap; }
+.lb-cap { flex: 1; font-size: 14px; }
+.dx-backup { padding: 14px 18px; display: flex; flex-direction: column; gap: 6px; }
+.dx-backup .hint { margin: 0; }
+.dx-backup-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* 廣播史・日本 */
+.more-page { gap: 14px; }
+.more-history, .more-japan { padding: 18px; }
+.era-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.era-filter .on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.timeline { list-style: none; margin: 0; padding: 0 0 0 4px; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 62px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+.timeline li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 22px; padding: 8px 0; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: 53px; top: 16px; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); border: 2px solid var(--card); }
+.tl-year { font: 700 17px "Share Tech Mono", monospace; color: var(--brand); padding-top: 4px; text-align: right; }
+.tl-body b { font-family: "Noto Serif TC", serif; font-size: 16px; }
+.tl-body p { margin: 2px 0; font-size: 14px; }
+.tl-era { color: var(--ink-2); font-size: 11px; border: 1px solid var(--line); border-radius: 6px; padding: 0 5px; }
+.jp-h { margin: 16px 0 8px; font-family: "Noto Serif TC", serif; font-size: 16px; }
+.jp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.jp-item { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--bg); display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.jp-item p { margin: 0; font-size: 13px; color: var(--ink-2); }
+.jp-item button.lnk { cursor: pointer; font: inherit; font-size: 13px; }
+.kiwi-ul { list-style: none; padding: 0; margin: 4px 0 8px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.kiwi-ul li { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kiwi-ul small { color: var(--ink-2); }
+.kiwi-form { display: flex; gap: 6px; flex-wrap: wrap; }
+.kiwi-form input { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); flex: 1 1 160px; min-width: 0; }
+
+@media (max-width: 1080px) {
+  body[data-tab="dxlog"] .dock { flex-direction: column; }
+  body[data-tab="dxlog"] #radio { flex: none; max-width: 100%; width: 100%; }
+  body[data-tab="dxlog"] .dock .info { width: 100%; }
+  .dx-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dx-form, .qsl-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .dx-form, .qsl-form { grid-template-columns: 1fr; }
+  .dx-form .wide, .qsl-form .wide { grid-column: auto; }
+  .sinpo { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 8px; }
+  .sinpo small { display: none; }
+  .sinpo select { padding: 4px 2px; font-size: 12px; }
+  .tm-item { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .tm-item .tm-time { grid-column: 2; grid-row: 1; font-size: 20px; }
+  .tm-item .tm-main { grid-column: 1 / -1; }
+  .tm-item [data-test] { grid-column: 3; grid-row: 1; }
+  .tm-item [data-del] { grid-column: 3; grid-row: 2; }
+  .tm-station select { max-width: 100%; }
+  .tm-label input { width: 100%; }
+  .al-btns { grid-template-columns: 1fr; }
+  .timeline::before { left: 50px; }
+  .timeline li { grid-template-columns: 44px minmax(0, 1fr); }
+  .timeline li::before { left: 41px; }
+}
+@media (max-width: 640px) {
+  .tm-form label { width: 100%; white-space: nowrap; }
+  .tm-form label > input, .tm-form label > select { flex: 1; min-width: 0; width: auto; max-width: none; }
+  .tm-days { width: 100%; }
+}
