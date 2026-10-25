@@ -11,7 +11,7 @@ export const CONFIG = {
 
   // ② Cloudflare Worker 串流中繼網址（例如 https://radio-proxy.你的帳號.workers.dev）
   //    留空時：只能播放 https 串流，且大部分電台無法錄音
-  PROXY_URL: "",
+  PROXY_URL: "https://radio-proxy.jarcle-huang.workers.dev",
 
   // ③（選填）短波電台資料表的 Google 試算表 CSV 網址（「短波電台」分頁）
   //    留空時使用 repo 內建的 data/sw-stations.csv
