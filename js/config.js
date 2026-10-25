@@ -7,8 +7,7 @@ export const CONFIG = {
   // ① Google 試算表「發佈到網路」後的 CSV 網址
   //    （檔案 → 共用 → 發佈到網路 → 選「台灣電台」分頁 → 格式選 CSV）
   //    留空字串 "" 時，網站會使用 repo 內建的 data/stations.csv
-  SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQE23fwuXRaLqxPeyUlUNVOs5f3P7KiirTa-7HUIWSvUYKvaTQ69YrMZNUiTp8qVF3kboUJ38DAVgIW/pub?gid=0&single=true&output=csv
-",
+  SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQE23fwuXRaLqxPeyUlUNVOs5f3P7KiirTa-7HUIWSvUYKvaTQ69YrMZNUiTp8qVF3kboUJ38DAVgIW/pub?gid=0&single=true&output=csv",
 
   // ② Cloudflare Worker 串流中繼網址（例如 https://radio-proxy.你的帳號.workers.dev）
   //    留空時：只能播放 https 串流，且大部分電台無法錄音
