@@ -111,7 +111,7 @@ function applyFilters() {
   const county = $("#f-county").value, genre = $("#f-genre").value;
   const verified = $("#f-verified").checked;
   state.filtered = state.stations.filter(s =>
-    (!q || [s.name, s.network, s.county, s.genre, String(s.freq)].join(" ").toLowerCase().includes(q)) &&
+    (!q || [s.name, s.network, s.county, s.genre, String(s.freq), s.note].join(" ").toLowerCase().includes(q)) &&
     (!band || s.band === band) && (!region || s.region === region) &&
     (!county || s.county === county) && (!genre || s.genre === genre) &&
     (!verified || s.verified));

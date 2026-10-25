@@ -252,9 +252,16 @@ export class RadioUI {
   }
 
   dialStations() {
-    return this.getStations()
-      .filter(s => s.band === this.band && (this.band === "SW" || this.region === "全部" || s.region === this.region))
-      .sort((a, b) => a.freq - b.freq);
+    // 同一聯播網、同一頻率在同地區的多個轉播站只保留一個（優先保留有串流的），轉旋鈕才不會一直停在同一台
+    const seen = new Map();
+    for (const s of this.getStations()) {
+      if (s.band !== this.band) continue;
+      if (this.band !== "SW" && this.region !== "全部" && s.region !== this.region) continue;
+      const key = `${s.freq}|${s.network || s.name}`;
+      const prev = seen.get(key);
+      if (!prev || (!prev.stream && s.stream) || (this.current && s.id === this.current.id)) seen.set(key, s);
+    }
+    return [...seen.values()].sort((a, b) => a.freq - b.freq);
   }
 
   step(dir) {

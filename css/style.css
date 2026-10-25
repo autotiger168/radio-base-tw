@@ -653,3 +653,9 @@ body[data-tab="dxlog"] .dock .info { flex: 1; min-width: 0; }
   .tm-form label > input, .tm-form label > select { flex: 1; min-width: 0; width: auto; max-width: none; }
   .tm-days { width: 100%; }
 }
+
+/* 地圖群組圓圈（同一發射站的多個電台） */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(163, 84, 28, .25); }
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+  background-color: #a3541c; color: #fff; font: 700 12px "Share Tech Mono", monospace;
+}
