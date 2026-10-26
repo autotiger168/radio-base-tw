@@ -185,7 +185,7 @@ async function tuneTo(station) {
   try {
     const mode = await engine.play(stream, { title: station.name, artist: `${station.band} ${formatFreq(station)}` });
     if (token !== state.tuneToken) return;
-    if (radio.skin === "vintage") engine.warmUp(1.8);
+    if (radio.skinCfg.warm) engine.warmUp(1.8);
     radio.setStatus("播放中", mode === "webaudio" ? "可錄音" : "此台無法錄音");
     state.streamInfo[station.id].mode = mode;
   } catch (e) {

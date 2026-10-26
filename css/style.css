@@ -286,9 +286,6 @@ details { margin-top: 8px; } summary { cursor: pointer; color: var(--ink-2); }
 
 /* 皮膚切換列 */
 .radio-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--ink-2); }
-.skin-switch { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
-.skin-switch button { border: 0; background: none; padding: 5px 12px; border-radius: 999px; cursor: pointer; color: var(--ink-2); font-size: 13px; }
-.skin-switch button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
 .region-pick select { margin-left: 4px; padding: 3px 6px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); }
 .sfx-pick input { accent-color: var(--brand); }
 

@@ -1,0 +1,480 @@
+/* =============================================================
+   機身皮膚（16 款＋我的照片）
+   每款只改外觀；結構與功能都共用。新增皮膚：
+   1. 在 js/radio-ui.js 的 SKINS 加一筆
+   2. 在這裡加 .radio[data-skin="新id"] 的樣式
+   ============================================================= */
+
+/* ---------- 共用：依皮膚設定開關 ---------- */
+.radio[data-spectrum="on"] .spectrum { display: block; }
+.radio[data-vu="led"] .vu { background: transparent; box-shadow: none; }
+.radio .cabinet { isolation: isolate; }
+.radio .cabinet::before, .radio .cabinet::after { content: none; pointer-events: none; }
+
+/* 機身選單 */
+.skin-pick { display: flex; align-items: center; gap: 6px; }
+.skin-pick select { padding: 5px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 13px; max-width: 190px; }
+.skin-prev, .skin-next { padding: 4px 8px; }
+.photo-btn { cursor: pointer; }
+
+/* =============================================================
+   1. 昭和電晶體機：奶油白＋朱紅、圓形喇叭網、旋轉選台窗
+   ============================================================= */
+.radio[data-skin="showa"] {
+  --cab: #f1e6cf; --cab-edge: #c9372c; --panel: #d8c9aa; --text: #7a1e17;
+  --disp-bg: #fff8e7; --disp-ink: #b8281e; --disp-glow: transparent;
+  --dial-bg: #fff8e7; --dial-ink: #3b2a1e; --needle: #c9372c;
+  --knob: #b8281e; --knob-hi: #ef6a5c; --key: #fff8e7; --key-ink: #7a1e17;
+  --vu-face: #fff8e7; --vu-ink: #3b2a1e; --vu-red: #c9372c; --accent: #c9372c;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="showa"] .cabinet {
+  border-radius: 34px; border: 6px solid #c9372c;
+  background: linear-gradient(180deg, #fbf3e0, #ecdfc2);
+  box-shadow: inset 0 3px 0 #fff, 0 16px 26px rgba(80, 20, 10, .3);
+}
+.radio[data-skin="showa"] .speaker { border-radius: 50%; aspect-ratio: 1; min-height: 0; align-self: center; background: #c0b08f; box-shadow: inset 0 0 0 6px #b8a682, inset 0 4px 10px rgba(0,0,0,.35); }
+.radio[data-skin="showa"] .grille {
+  border-radius: 50%; inset: 14px;
+  background: radial-gradient(circle, #6e5d42 1.4px, transparent 1.8px) 0 0 / 7px 7px, #d9cba9;
+}
+.radio[data-skin="showa"] .badge { bottom: auto; top: 50%; transform: translate(-50%, -50%); background: #c9372c; color: #fff8e7; padding: 4px 8px; border-radius: 4px; font-family: "Noto Serif TC", serif; letter-spacing: .3em; opacity: 1; }
+.radio[data-skin="showa"] .display { border-radius: 14px; border: 2px solid #c9372c; box-shadow: inset 0 1px 4px rgba(0,0,0,.2); }
+.radio[data-skin="showa"] .dial-glass { border-radius: 30px; border: 2px solid #c9372c; }
+.radio[data-skin="showa"] .knob { box-shadow: 0 0 0 4px #fff8e7, 0 4px 8px rgba(0,0,0,.35); }
+.radio[data-skin="showa"] .key { border-radius: 14px; border: 1px solid #d6c5a2; }
+.radio[data-skin="showa"] .knob-label { color: #7a1e17; }
+
+/* =============================================================
+   2. 台灣懷舊客廳機：深色木紋、金色飾條、毛玻璃燈箱
+   ============================================================= */
+.radio[data-skin="taiwan70"] {
+  --cab: #4a2814; --cab-edge: #c9a24a; --panel: #2b170b; --text: #f2d58a;
+  --disp-bg: #23140a; --disp-ink: #ffcf6b; --disp-glow: rgba(255, 200, 90, .55);
+  --dial-bg: #efe4c8; --dial-ink: #3a2412; --needle: #d22b1e;
+  --knob: #c9a24a; --knob-hi: #f6e2a4; --key: #f3ead6; --key-ink: #3a2412;
+  --vu-face: #f5e8c5; --vu-ink: #3a2412; --vu-red: #c0392b; --accent: #ffcf6b;
+  --disp-font: "VT323", monospace;
+}
+.radio[data-skin="taiwan70"] .cabinet {
+  border-radius: 8px; border: 4px solid #c9a24a;
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.18) 0 3px, transparent 3px 11px, rgba(255,255,255,.04) 11px 12px, transparent 12px 19px),
+    linear-gradient(180deg, #5b3219, #3a1f0e);
+  box-shadow: inset 0 0 0 3px #3a1f0e, inset 0 0 0 5px #e7c56e, 0 18px 30px rgba(20, 10, 0, .45);
+}
+.radio[data-skin="taiwan70"] .grille {
+  background: repeating-linear-gradient(90deg, #c9a24a 0 3px, #2b170b 3px 9px);
+  box-shadow: inset 0 0 0 3px #c9a24a, inset 0 0 20px rgba(0,0,0,.6);
+}
+.radio[data-skin="taiwan70"] .badge { color: #f6e2a4; font-family: "Noto Serif TC", serif; letter-spacing: .5em; background: #2b170b; padding: 3px 10px; border: 1px solid #c9a24a; opacity: 1; }
+.radio[data-skin="taiwan70"] .dial-glass { background: linear-gradient(180deg, #fff6dc, #e9d9b0); box-shadow: inset 0 0 0 2px #c9a24a, inset 0 2px 8px rgba(0,0,0,.3); }
+.radio[data-skin="taiwan70"][data-power="on"] .dial-glass { box-shadow: inset 0 0 0 2px #c9a24a, 0 0 22px rgba(255, 210, 120, .55); }
+.radio[data-skin="taiwan70"] .key { border-radius: 2px 2px 6px 6px; background: linear-gradient(#fffaf0, #e5d6b4); }
+.radio[data-skin="taiwan70"] .knob { background: radial-gradient(circle at 35% 30%, #fff1c2, #c9a24a 55%, #8a6a24); }
+.radio[data-skin="taiwan70"] .knob i { background: #3a1f0e; }
+
+/* =============================================================
+   3. Art Deco 教堂型：拱門造型、扇形雕花、黃銅指針
+   ============================================================= */
+.radio[data-skin="deco"] {
+  --cab: #6b3a1a; --cab-edge: #2f1608; --panel: #2f1608; --text: #f0d9a6;
+  --disp-bg: #1f0f05; --disp-ink: #f4c46a; --disp-glow: rgba(244, 196, 106, .5);
+  --dial-bg: #f4e3bb; --dial-ink: #3a1d0a; --needle: #b8862b;
+  --knob: #2f1608; --knob-hi: #8a5a2c; --key: #f4e3bb; --key-ink: #3a1d0a;
+  --vu-face: #f4e3bb; --vu-ink: #3a1d0a; --vu-red: #a33b1f; --accent: #f4c46a;
+  --disp-font: "Poiret One", "VT323", serif;
+}
+.radio[data-skin="deco"] .cabinet {
+  border-radius: 200px 200px 14px 14px; padding-top: 40px; border: 5px solid #2f1608;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.25), transparent 15%, transparent 85%, rgba(0,0,0,.25)),
+    repeating-linear-gradient(100deg, rgba(0,0,0,.1) 0 2px, transparent 2px 13px),
+    radial-gradient(ellipse at 50% 0%, #a96a35, #6b3a1a 60%, #4a2410);
+}
+.radio[data-skin="deco"] .speaker { border-radius: 120px 120px 10px 10px; }
+.radio[data-skin="deco"] .grille {
+  border-radius: 110px 110px 8px 8px;
+  background:
+    repeating-conic-gradient(from -90deg at 50% 100%, #2f1608 0 4deg, #c79a5a 4deg 9deg);
+  box-shadow: inset 0 0 0 4px #b8862b, inset 0 0 22px rgba(0,0,0,.5);
+}
+.radio[data-skin="deco"] .badge { font-family: "Poiret One", serif; letter-spacing: .4em; color: #f4c46a; font-size: 12px; }
+.radio[data-skin="deco"] .display { border-radius: 60px 60px 10px 10px; border: 2px solid #b8862b; }
+.radio[data-skin="deco"] .d-num { font-family: "Poiret One", serif; font-weight: 400; }
+.radio[data-skin="deco"] .dial-glass { border-radius: 40px 40px 8px 8px; box-shadow: inset 0 0 0 2px #b8862b; }
+.radio[data-skin="deco"] .knob { background: radial-gradient(circle at 35% 30%, #f0cf8a, #b8862b 55%, #6e4c14); }
+.radio[data-skin="deco"] .key { border-radius: 30px; }
+
+/* =============================================================
+   4. 80s 隨身聽：藍銀配色、橘色按鍵、小 LCD
+   ============================================================= */
+.radio[data-skin="walkman"] {
+  --cab: #2f5fa8; --cab-edge: #1b3a6e; --panel: #1b2433; --text: #e8eef7;
+  --disp-bg: #9fb39a; --disp-ink: #142012; --disp-glow: transparent;
+  --dial-bg: #c8d1dd; --dial-ink: #1b2433; --needle: #f07c1e;
+  --knob: #b9c2ce; --knob-hi: #ffffff; --key: #f07c1e; --key-ink: #fff;
+  --vu-face: #f07c1e; --vu-ink: #e8eef7; --vu-red: #ff3b3b; --accent: #f07c1e;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="walkman"] .cabinet {
+  border-radius: 18px; border: 0;
+  background: linear-gradient(180deg, #c9d1db 0 46%, #2f5fa8 46% 100%);
+  box-shadow: inset 0 2px 0 #fff, inset 0 -3px 0 #1b3a6e, 0 14px 24px rgba(10, 30, 60, .35);
+}
+.radio[data-skin="walkman"] .speaker { background: #1b2433; border-radius: 10px; }
+.radio[data-skin="walkman"] .grille { background: repeating-linear-gradient(0deg, #3a4558 0 2px, #1b2433 2px 6px); }
+.radio[data-skin="walkman"] .badge { font-family: "Orbitron", sans-serif; color: #f07c1e; letter-spacing: .3em; }
+.radio[data-skin="walkman"] .display { border-radius: 4px; border: 3px solid #1b2433; }
+.radio[data-skin="walkman"] .d-num { font-size: 40px; }
+.radio[data-skin="walkman"] .knob { background: repeating-linear-gradient(0deg, #9aa4b1 0 2px, #e3e8ee 2px 4px); border-radius: 12px; width: 34px; }
+.radio[data-skin="walkman"] .knob i { top: 4px; height: 8px; background: #f07c1e; }
+.radio[data-skin="walkman"] .key { border-radius: 4px; box-shadow: 0 3px 0 #9c4a0a; font-family: "Orbitron", sans-serif; font-size: 11px; }
+.radio[data-skin="walkman"] .key-preset, .radio[data-skin="walkman"] .key-sleep { background: #e8eef7; color: #1b3a6e; box-shadow: 0 3px 0 #8d99a8; }
+.radio[data-skin="walkman"] .knob-label { color: #e8eef7; }
+
+/* =============================================================
+   5. 軍用通訊機：橄欖綠鐵殼、螺絲、紅燈刻度
+   ============================================================= */
+.radio[data-skin="military"] {
+  --cab: #4b5232; --cab-edge: #2b2f1c; --panel: #23261a; --text: #e5e2c8;
+  --disp-bg: #120d08; --disp-ink: #ff6a3d; --disp-glow: rgba(255, 90, 50, .6);
+  --dial-bg: #120d08; --dial-ink: #e5e2c8; --needle: #ff6a3d;
+  --knob: #1a1a14; --knob-hi: #4a4a3a; --key: #2b2f1c; --key-ink: #e5e2c8;
+  --vu-face: #dcd6b4; --vu-ink: #1a1a14; --vu-red: #b52a1a; --accent: #ff6a3d;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="military"] .cabinet {
+  border-radius: 6px; border: 3px solid #2b2f1c;
+  background:
+    radial-gradient(circle at 12px 12px, #8b8f6c 3px, #2b2f1c 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 12px) 12px, #8b8f6c 3px, #2b2f1c 4px, transparent 5px),
+    radial-gradient(circle at 12px calc(100% - 12px), #8b8f6c 3px, #2b2f1c 4px, transparent 5px),
+    radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #8b8f6c 3px, #2b2f1c 4px, transparent 5px),
+    repeating-radial-gradient(circle at 30% 40%, rgba(0,0,0,.04) 0 2px, transparent 2px 5px),
+    linear-gradient(180deg, #59613c, #434a2c);
+}
+.radio[data-skin="military"] .grille { background: radial-gradient(circle, #0c0c08 2px, transparent 2.6px) 0 0 / 10px 10px, #33382a; box-shadow: inset 0 0 0 3px #1a1a14; }
+.radio[data-skin="military"] .badge { font-family: "Share Tech Mono", monospace; color: #e5e2c8; letter-spacing: .2em; background: #23261a; padding: 2px 8px; border: 1px solid #8b8f6c; }
+.radio[data-skin="military"] .display { border: 3px solid #1a1a14; border-radius: 3px; }
+.radio[data-skin="military"] .dial-glass { border: 2px solid #1a1a14; }
+.radio[data-skin="military"] .knob { background: repeating-conic-gradient(#2a2a20 0 8deg, #12120d 8deg 16deg); box-shadow: 0 0 0 4px #1a1a14, 0 4px 8px rgba(0,0,0,.6); }
+.radio[data-skin="military"] .knob i { background: #ff6a3d; }
+.radio[data-skin="military"] .key { border-radius: 2px; border: 1px solid #8b8f6c; font-family: "Share Tech Mono", monospace; }
+.radio[data-skin="military"] .key-power { background: #7a1b10; color: #fff; }
+.radio[data-skin="military"] .key.on { color: #ff6a3d; }
+
+/* =============================================================
+   6. 專業通訊接收機：機架式黑面板、S 表、瀑布頻譜
+   ============================================================= */
+.radio[data-skin="receiver"] {
+  --cab: #1d1f22; --cab-edge: #000; --panel: #0d0e10; --text: #c9ced6;
+  --disp-bg: #051018; --disp-ink: #36e0ff; --disp-glow: rgba(54, 224, 255, .5);
+  --dial-bg: #0b1218; --dial-ink: #9fb3c4; --needle: #ffb000;
+  --knob: #25282d; --knob-hi: #6c727b; --key: #2b2f35; --key-ink: #e6e9ee;
+  --vu-face: #36e0ff; --vu-ink: #9fb3c4; --vu-red: #ffb000; --accent: #36e0ff;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="receiver"] .cabinet {
+  border-radius: 4px; border: 0; padding: 18px 34px;
+  background:
+    linear-gradient(90deg, #8a9099 0 18px, #3a3e44 18px 20px, transparent 20px calc(100% - 20px), #3a3e44 calc(100% - 20px) calc(100% - 18px), #8a9099 calc(100% - 18px)),
+    linear-gradient(180deg, #26292d, #17191c);
+  box-shadow: 0 18px 30px rgba(0,0,0,.5);
+}
+.radio[data-skin="receiver"] .cabinet::before {
+  content: ""; position: absolute; left: 5px; top: 18px; bottom: 18px; width: 8px;
+  background: radial-gradient(circle, #111 2.5px, transparent 3px) 0 0 / 8px 40px; z-index: 1;
+}
+.radio[data-skin="receiver"] .cabinet::after {
+  content: ""; position: absolute; right: 5px; top: 18px; bottom: 18px; width: 8px;
+  background: radial-gradient(circle, #111 2.5px, transparent 3px) 0 0 / 8px 40px; z-index: 1;
+}
+.radio[data-skin="receiver"] .speaker { background: #050a0e; border: 1px solid #2b3540; border-radius: 4px; }
+.radio[data-skin="receiver"] .grille { background: linear-gradient(0deg, rgba(54,224,255,.08) 1px, transparent 1px) 0 0 / 100% 12px, linear-gradient(90deg, rgba(54,224,255,.08) 1px, transparent 1px) 0 0 / 12px 100%; }
+.radio[data-skin="receiver"] .badge { font-family: "Orbitron", sans-serif; color: #ffb000; font-size: 9px; }
+.radio[data-skin="receiver"] .display { border-radius: 2px; border: 1px solid #2b3540; }
+.radio[data-skin="receiver"] .d-num { font-size: 42px; }
+.radio[data-skin="receiver"] .dial-glass { border-radius: 2px; border: 1px solid #2b3540; }
+.radio[data-skin="receiver"] .knob { background: radial-gradient(circle, #3a3e44 40%, transparent 41%), repeating-conic-gradient(#43474e 0 5deg, #1b1d21 5deg 10deg); }
+.radio[data-skin="receiver"] .knob i { background: #ffb000; }
+.radio[data-skin="receiver"] .key { border-radius: 3px; font-family: "Share Tech Mono", monospace; border-top: 2px solid #4a5059; }
+.radio[data-skin="receiver"] .key.on { color: #36e0ff; }
+
+/* =============================================================
+   7. CRT 復古電腦：綠色磷光、掃描線、像素字
+   ============================================================= */
+.radio[data-skin="crt"] {
+  --cab: #d8d2c0; --cab-edge: #9c9583; --panel: #0a0f0a; --text: #4b463a;
+  --disp-bg: #041104; --disp-ink: #39ff6b; --disp-glow: rgba(57, 255, 107, .65);
+  --dial-bg: #041104; --dial-ink: #39ff6b; --needle: #b6ffc8;
+  --knob: #b9b29e; --knob-hi: #f2eddf; --key: #ece6d4; --key-ink: #3a362c;
+  --vu-face: #39ff6b; --vu-ink: #39ff6b; --vu-red: #f2ff3b; --accent: #39ff6b;
+  --disp-font: "VT323", monospace;
+}
+.radio[data-skin="crt"] .cabinet {
+  border-radius: 14px; border: 0;
+  background: linear-gradient(180deg, #e6e0cd, #c9c2ad);
+  box-shadow: inset 0 2px 0 #fff, inset 0 -4px 0 #a7a08b, 0 16px 26px rgba(40, 35, 20, .35);
+}
+.radio[data-skin="crt"] .speaker { background: #0a0f0a; border-radius: 22px; border: 10px solid #b9b29e; box-shadow: inset 0 0 30px rgba(57,255,107,.15); }
+.radio[data-skin="crt"] .grille { background: repeating-linear-gradient(0deg, rgba(57,255,107,.06) 0 1px, transparent 1px 3px); }
+.radio[data-skin="crt"] .badge { font-family: "VT323", monospace; font-size: 16px; color: #39ff6b; letter-spacing: .15em; text-shadow: 0 0 6px #39ff6b; }
+.radio[data-skin="crt"] .display, .radio[data-skin="crt"] .dial-glass {
+  border-radius: 18px; border: 6px solid #b9b29e;
+  background-image: repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px);
+}
+.radio[data-skin="crt"] .d-num { font-size: 52px; }
+.radio[data-skin="crt"] .tick, .radio[data-skin="crt"] .marks i { background: #39ff6b; }
+.radio[data-skin="crt"] .tick em { color: #39ff6b; font-family: "VT323", monospace; font-size: 14px; }
+.radio[data-skin="crt"] .key { border-radius: 3px; box-shadow: 0 4px 0 #a7a08b; font-family: "VT323", monospace; font-size: 16px; }
+.radio[data-skin="crt"] .knob { border-radius: 8px; }
+.radio[data-skin="crt"] .knob-label { color: #4b463a; }
+
+/* =============================================================
+   8. 蒸汽龐克：黃銅、齒輪、壓力錶
+   ============================================================= */
+.radio[data-skin="steampunk"] {
+  --cab: #5a3a1e; --cab-edge: #2a170a; --panel: #2a170a; --text: #f3d9a4;
+  --disp-bg: #1a0d04; --disp-ink: #ffb347; --disp-glow: rgba(255, 160, 60, .7);
+  --dial-bg: #e9d3a0; --dial-ink: #3a220f; --needle: #8a1c0f;
+  --knob: #8c5a1f; --knob-hi: #f1c873; --key: #c99a4a; --key-ink: #2a170a;
+  --vu-face: #efe0b8; --vu-ink: #2a170a; --vu-red: #8a1c0f; --accent: #ffb347;
+  --disp-font: "VT323", monospace;
+}
+.radio[data-skin="steampunk"] .cabinet {
+  border-radius: 16px; border: 5px solid #b8862b;
+  background:
+    radial-gradient(circle at 10px 10px, #f1c873 3px, #6e4c14 4px, transparent 5px) 0 0 / 40px 40px,
+    linear-gradient(135deg, #6b4423, #3e2410 60%, #2a170a);
+  box-shadow: inset 0 0 0 3px #3e2410, inset 0 0 30px rgba(0,0,0,.6), 0 18px 30px rgba(30, 15, 0, .5);
+}
+.radio[data-skin="steampunk"] .grille {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 30%, #b8862b 31% 33%, transparent 34% 52%, #b8862b 53% 55%, transparent 56%),
+    repeating-conic-gradient(#3e2410 0 10deg, #8c5a1f 10deg 20deg);
+  border-radius: 50%; inset: 12px auto auto 50%; width: calc(100% - 24px); aspect-ratio: 1; transform: translateX(-50%);
+  box-shadow: 0 0 0 6px #b8862b, 0 0 20px rgba(0,0,0,.6);
+  animation: gear 24s linear infinite;
+}
+@keyframes gear { to { transform: translateX(-50%) rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .radio[data-skin="steampunk"] .grille { animation: none; } }
+.radio[data-skin="steampunk"] .badge { font-family: "Noto Serif TC", serif; color: #f1c873; letter-spacing: .25em; }
+.radio[data-skin="steampunk"] .display { border: 4px solid #b8862b; border-radius: 10px; }
+.radio[data-skin="steampunk"] .dial-glass { border: 3px solid #b8862b; }
+.radio[data-skin="steampunk"] .vu { border-radius: 50% 50% 8px 8px; border: 3px solid #b8862b; }
+.radio[data-skin="steampunk"] .knob { background: radial-gradient(circle, #f1c873 18%, transparent 19%), repeating-conic-gradient(#c99a4a 0 12deg, #6e4c14 12deg 24deg); }
+.radio[data-skin="steampunk"] .key { border-radius: 50%; width: 36px; flex: none; height: 36px; background: radial-gradient(circle at 35% 30%, #f6dc9a, #b8862b 60%, #6e4c14); }
+.radio[data-skin="steampunk"] .key span { display: none; }
+
+/* =============================================================
+   9. 和風漆器：黑漆朱紅、金色櫻花、和紙顯示窗
+   ============================================================= */
+.radio[data-skin="urushi"] {
+  --cab: #120c0b; --cab-edge: #8e1b14; --panel: #1c1211; --text: #e9c46a;
+  --disp-bg: #f4ecd8; --disp-ink: #2a1a14; --disp-glow: transparent;
+  --dial-bg: #f4ecd8; --dial-ink: #2a1a14; --needle: #b3261e;
+  --knob: #8e1b14; --knob-hi: #d4483a; --key: #1c1211; --key-ink: #e9c46a;
+  --vu-face: #f4ecd8; --vu-ink: #2a1a14; --vu-red: #b3261e; --accent: #e9c46a;
+  --disp-font: "Noto Serif TC", serif;
+}
+.radio[data-skin="urushi"] .cabinet {
+  border-radius: 12px; border: 4px solid #8e1b14;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.08), transparent 50%),
+    linear-gradient(160deg, #1f1615, #0b0707);
+  box-shadow: inset 0 0 0 2px #e9c46a, 0 18px 30px rgba(0,0,0,.5);
+}
+.radio[data-skin="urushi"] .grille {
+  background:
+    radial-gradient(circle at 30% 30%, #e9c46a 0 2px, transparent 2.5px) 0 0 / 22px 22px,
+    repeating-linear-gradient(45deg, #2a1c1a 0 6px, #1c1211 6px 12px);
+  box-shadow: inset 0 0 0 3px #8e1b14;
+}
+.radio[data-skin="urushi"] .speaker::after {
+  content: "🌸"; position: absolute; right: 12px; top: 10px; font-size: 22px; filter: drop-shadow(0 0 4px rgba(233,196,106,.6));
+}
+.radio[data-skin="urushi"] .badge { font-family: "Noto Serif TC", serif; letter-spacing: .6em; color: #e9c46a; }
+.radio[data-skin="urushi"] .display, .radio[data-skin="urushi"] .dial-glass {
+  background-image: radial-gradient(rgba(120, 90, 50, .08) 1px, transparent 1px);
+  background-size: 4px 4px; border: 2px solid #8e1b14; border-radius: 4px;
+}
+.radio[data-skin="urushi"] .d-num { font-family: "Noto Serif TC", serif; font-weight: 900; font-size: 40px; }
+.radio[data-skin="urushi"] .d-name { font-family: "Noto Serif TC", serif; font-size: 18px; }
+.radio[data-skin="urushi"] .key { border: 1px solid #e9c46a; border-radius: 2px; font-family: "Noto Serif TC", serif; }
+.radio[data-skin="urushi"] .key.on { background: #8e1b14; }
+.radio[data-skin="urushi"] .knob i { background: #e9c46a; }
+
+/* =============================================================
+   10. 極簡北歐：淺木＋霧白、單一大旋鈕感
+   ============================================================= */
+.radio[data-skin="nordic"] {
+  --cab: #f4f1ea; --cab-edge: #d9d2c3; --panel: #e9e3d6; --text: #6b6457;
+  --disp-bg: #fbfaf6; --disp-ink: #2e2b26; --disp-glow: transparent;
+  --dial-bg: #fbfaf6; --dial-ink: #6b6457; --needle: #e0603a;
+  --knob: #d8b98c; --knob-hi: #f3e2c4; --key: #fbfaf6; --key-ink: #2e2b26;
+  --vu-face: #e0603a; --vu-ink: #6b6457; --vu-red: #c23b22; --accent: #e0603a;
+  --disp-font: "Noto Sans TC", sans-serif;
+}
+.radio[data-skin="nordic"] .cabinet {
+  border-radius: 26px; border: 0;
+  background: linear-gradient(180deg, #faf8f3, #ece7dc);
+  box-shadow: 0 0 0 10px #d8b98c inset, 0 20px 40px rgba(60, 50, 30, .15);
+  padding: 26px;
+}
+.radio[data-skin="nordic"] .speaker { background: #d7d1c4; border-radius: 18px; box-shadow: none; }
+.radio[data-skin="nordic"] .grille { background: radial-gradient(circle, #a9a293 1.5px, transparent 2px) 0 0 / 9px 9px, #e2ddd2; border-radius: 14px; }
+.radio[data-skin="nordic"] .badge { font-family: "Noto Sans TC", sans-serif; font-weight: 500; color: #6b6457; letter-spacing: .4em; }
+.radio[data-skin="nordic"] .display { box-shadow: none; border: 1px solid #e3ddcf; border-radius: 14px; }
+.radio[data-skin="nordic"] .d-num { font-weight: 300; font-size: 44px; letter-spacing: 0; }
+.radio[data-skin="nordic"] .d-row, .radio[data-skin="nordic"] .d-name { font-size: 15px; }
+.radio[data-skin="nordic"] .dial-glass { box-shadow: none; border: 1px solid #e3ddcf; border-radius: 14px; }
+.radio[data-skin="nordic"] .knob { background: radial-gradient(circle at 35% 30%, #f6e6c9, #d8b98c 70%); box-shadow: 0 6px 14px rgba(60, 50, 30, .2); }
+.radio[data-skin="nordic"] .knob i { background: #2e2b26; width: 3px; }
+.radio[data-skin="nordic"] .key { border-radius: 999px; box-shadow: 0 1px 0 #d9d2c3; border: 1px solid #e3ddcf; font-family: "Noto Sans TC", sans-serif; font-weight: 500; }
+.radio[data-skin="nordic"] .key.on { background: #2e2b26; color: #fbfaf6; }
+.radio[data-skin="nordic"] .knob-label { color: #6b6457; }
+
+/* =============================================================
+   11. 猛虎綠黃（棒球）：深綠圓盤、黃黑虎紋、白星藍框
+   ============================================================= */
+.radio[data-skin="tigerfield"] {
+  --cab: #0d6b3a; --cab-edge: #1f4fa3; --panel: #0a4a28; --text: #ffd21f;
+  --disp-bg: #0b2a17; --disp-ink: #ffd21f; --disp-glow: rgba(255, 210, 31, .55);
+  --dial-bg: #fffbe6; --dial-ink: #10261a; --needle: #e2231a;
+  --knob: #111; --knob-hi: #ffd21f; --key: #ffd21f; --key-ink: #111;
+  --vu-face: #fffbe6; --vu-ink: #10261a; --vu-red: #e2231a; --accent: #ffd21f;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="tigerfield"] .cabinet {
+  border-radius: 24px; border: 6px solid #1f4fa3;
+  background:
+    radial-gradient(circle at 8% 10%, #fff 0 2px, transparent 3px),
+    radial-gradient(circle at 92% 10%, #fff 0 2px, transparent 3px),
+    radial-gradient(circle at 8% 90%, #fff 0 2px, transparent 3px),
+    radial-gradient(circle at 92% 90%, #fff 0 2px, transparent 3px),
+    linear-gradient(180deg, #13824a, #0a5a30);
+  box-shadow: inset 0 0 0 4px #fff, 0 18px 30px rgba(0, 40, 20, .45);
+}
+.radio[data-skin="tigerfield"] .speaker { border-radius: 50%; aspect-ratio: 1; min-height: 0; align-self: center; background: #0a4a28; box-shadow: 0 0 0 5px #fff, 0 0 0 9px #1f4fa3; }
+.radio[data-skin="tigerfield"] .grille {
+  border-radius: 50%; inset: 10px;
+  background:
+    repeating-linear-gradient(115deg, #111 0 7px, transparent 7px 16px, #111 16px 20px, transparent 20px 30px),
+    radial-gradient(circle at 40% 40%, #ffe45c, #ffc400 60%, #e8a600);
+}
+.radio[data-skin="tigerfield"] .badge { bottom: -2px; color: #fff; font-family: "Noto Serif TC", serif; letter-spacing: .35em; text-shadow: 0 1px 2px #000; }
+.radio[data-skin="tigerfield"] .display { border: 3px solid #ffd21f; border-radius: 10px; }
+.radio[data-skin="tigerfield"] .dial-glass { border: 3px solid #fff; background-image: linear-gradient(90deg, transparent 49.5%, rgba(16,38,26,.08) 50%, transparent 50.5%); }
+.radio[data-skin="tigerfield"] .knob { background: repeating-linear-gradient(115deg, #111 0 5px, #ffd21f 5px 11px); box-shadow: 0 0 0 3px #fff, 0 4px 8px rgba(0,0,0,.4); }
+.radio[data-skin="tigerfield"] .knob i { background: #e2231a; }
+.radio[data-skin="tigerfield"] .key { border-radius: 8px; font-weight: 900; }
+.radio[data-skin="tigerfield"] .key.on { background: #fff; }
+.radio[data-skin="tigerfield"] .key-rec { color: #e2231a; }
+.radio[data-skin="tigerfield"] .knob-label { color: #fff; }
+
+/* =============================================================
+   12. 電光藍（棒球）：深藍、放射光束、冰晶光點、銀色金屬字
+   ============================================================= */
+.radio[data-skin="bluepower"] {
+  --cab: #061a3d; --cab-edge: #1e6bff; --panel: #031026; --text: #dce8ff;
+  --disp-bg: #020a1a; --disp-ink: #e8f1ff; --disp-glow: rgba(90, 170, 255, .9);
+  --dial-bg: #04122b; --dial-ink: #9cc4ff; --needle: #4fd2ff;
+  --knob: #8e9bb0; --knob-hi: #ffffff; --key: #0b2a66; --key-ink: #e8f1ff;
+  --vu-face: #4fd2ff; --vu-ink: #9cc4ff; --vu-red: #ffffff; --accent: #4fd2ff;
+  --disp-font: "Orbitron", sans-serif;
+}
+.radio[data-skin="bluepower"] .cabinet {
+  border-radius: 18px; border: 2px solid #1e6bff;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,.9) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 20%, rgba(255,255,255,.8) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 85% 70%, rgba(180,220,255,.9) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 40% 30%, rgba(180,220,255,.7) 0 1px, transparent 1.5px),
+    repeating-conic-gradient(from 0deg at 50% 110%, rgba(60,140,255,.18) 0 3deg, transparent 3deg 9deg),
+    radial-gradient(ellipse at 50% 100%, #1b5cd6, #061a3d 60%, #020a1a);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset, 0 0 30px rgba(30, 107, 255, .45), 0 18px 34px rgba(0,0,0,.55);
+}
+.radio[data-skin="bluepower"] .speaker { background: #020a1a; border: 1px solid #1e6bff; box-shadow: inset 0 0 24px rgba(30,107,255,.4); }
+.radio[data-skin="bluepower"] .grille { background: repeating-linear-gradient(60deg, rgba(79,210,255,.08) 0 2px, transparent 2px 10px); }
+.radio[data-skin="bluepower"] .badge {
+  font-family: "Orbitron", sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .15em;
+  background: linear-gradient(180deg, #ffffff, #a9b6c8 50%, #6f7d92 51%, #e7eef8); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 6px rgba(79,210,255,.8)); opacity: 1;
+}
+.radio[data-skin="bluepower"] .display { border: 1px solid #1e6bff; border-radius: 12px; box-shadow: inset 0 0 18px rgba(30,107,255,.35); }
+.radio[data-skin="bluepower"] .d-num {
+  background: linear-gradient(180deg, #ffffff, #b8c6da 50%, #7d8ba1 51%, #f1f6ff); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 8px rgba(79,210,255,.8)); text-shadow: none; font-weight: 700;
+}
+.radio[data-skin="bluepower"] .dial-glass { border: 1px solid #1e6bff; border-radius: 12px; }
+.radio[data-skin="bluepower"] .knob { background: conic-gradient(from 200deg, #e9eef6, #6f7d92, #ffffff, #7d8ba1, #e9eef6); box-shadow: 0 0 16px rgba(79,210,255,.6), 0 6px 12px rgba(0,0,0,.6); }
+.radio[data-skin="bluepower"] .knob i { width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: #4fd2ff; box-shadow: 0 0 8px #4fd2ff; }
+.radio[data-skin="bluepower"] .key { border: 1px solid #1e6bff; border-radius: 8px; font-family: "Orbitron", sans-serif; font-size: 11px; box-shadow: 0 2px 0 #000; }
+.radio[data-skin="bluepower"] .key.on { color: #4fd2ff; box-shadow: 0 0 12px rgba(79,210,255,.6); }
+
+/* =============================================================
+   13. 藍盾護甲（棒球）：盾牌造型、拋光銀甲、白色草寫數字
+   ============================================================= */
+.radio[data-skin="blueshield"] {
+  --cab: #12307a; --cab-edge: #0a1d4d; --panel: #0a1d4d; --text: #e9eef7;
+  --disp-bg: #0a1d4d; --disp-ink: #ffffff; --disp-glow: rgba(140, 180, 255, .5);
+  --dial-bg: #e9eef7; --dial-ink: #0a1d4d; --needle: #2f6bff;
+  --knob: #9aa6b8; --knob-hi: #ffffff; --key: #e9eef7; --key-ink: #0a1d4d;
+  --vu-face: #e9eef7; --vu-ink: #0a1d4d; --vu-red: #2f6bff; --accent: #8fb4ff;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="blueshield"] .cabinet {
+  border-radius: 20px 20px 50% 50% / 20px 20px 18% 18%; padding-bottom: 40px; border: 5px solid #0a1d4d;
+  background:
+    linear-gradient(90deg, transparent 49.6%, rgba(255,255,255,.12) 49.6% 50.4%, transparent 50.4%),
+    linear-gradient(160deg, #2a4fae, #12307a 55%, #0a1d4d);
+  box-shadow: inset 0 0 0 4px #c3ccda, inset 0 0 0 7px #0a1d4d, 0 20px 34px rgba(5, 15, 40, .5);
+}
+.radio[data-skin="blueshield"] .speaker { background: linear-gradient(160deg, #eef2f8, #9aa6b8 45%, #d7dee9 55%, #6c788c); border-radius: 14px 14px 40% 40%; }
+.radio[data-skin="blueshield"] .grille {
+  border-radius: 10px 10px 40% 40%;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 9px, rgba(10,29,77,.85) 9px 13px),
+    linear-gradient(160deg, #f4f7fb, #a3afc1 45%, #e0e6ef 55%, #758197);
+}
+.radio[data-skin="blueshield"] .badge { color: #0a1d4d; font-family: "Pacifico", cursive; font-size: 15px; letter-spacing: .02em; text-transform: none; text-shadow: 0 1px 0 #fff; opacity: 1; }
+.radio[data-skin="blueshield"] .display { border: 3px solid #c3ccda; border-radius: 12px; }
+.radio[data-skin="blueshield"] .d-num { font-family: "Pacifico", cursive; font-size: 40px; font-weight: 400; letter-spacing: 0; text-shadow: 2px 2px 0 #2f6bff; }
+.radio[data-skin="blueshield"] .dial-glass { border: 3px solid #c3ccda; }
+.radio[data-skin="blueshield"] .knob { background: conic-gradient(from 210deg, #f4f7fb, #8f9bae, #ffffff, #6c788c, #f4f7fb); box-shadow: 0 0 0 3px #0a1d4d, 0 5px 10px rgba(0,0,0,.45); }
+.radio[data-skin="blueshield"] .knob i { background: #12307a; }
+.radio[data-skin="blueshield"] .key { border-radius: 6px 6px 50% 50% / 6px 6px 30% 30%; font-weight: 700; }
+.radio[data-skin="blueshield"] .key.on { background: #2f6bff; color: #fff; }
+
+/* =============================================================
+   我的照片：使用者自選圖片當機身（只存在自己的瀏覽器）
+   ============================================================= */
+.radio[data-skin="photo"] {
+  --cab: #222; --cab-edge: rgba(255,255,255,.4); --panel: rgba(0,0,0,.35); --text: #fff;
+  --disp-bg: rgba(0,0,0,.55); --disp-ink: #fff; --disp-glow: rgba(255,255,255,.5);
+  --dial-bg: rgba(255,255,255,.75); --dial-ink: #111; --needle: #ff4d4d;
+  --knob: rgba(30,30,30,.85); --knob-hi: rgba(160,160,160,.9); --key: rgba(255,255,255,.85); --key-ink: #111;
+  --vu-face: #ffffff; --vu-ink: #fff; --vu-red: #ff4d4d; --accent: #ffffff;
+  --disp-font: "Share Tech Mono", monospace;
+}
+.radio[data-skin="photo"] .cabinet {
+  border-radius: 20px; border: 2px solid rgba(255,255,255,.5);
+  background: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.35)), var(--photo, none) center / cover no-repeat, linear-gradient(135deg, #444, #111);
+}
+.radio[data-skin="photo"] .speaker { background: transparent; box-shadow: none; }
+.radio[data-skin="photo"] .grille { display: none; }
+.radio[data-skin="photo"] .badge { text-shadow: 0 1px 3px #000; }
+.radio[data-skin="photo"] .display, .radio[data-skin="photo"] .dial-glass { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.4); }
+.radio[data-skin="photo"] .knob-label { text-shadow: 0 1px 3px #000; }
+
+/* ---------- 手機版微調 ---------- */
+@media (max-width: 640px) {
+  .radio[data-skin="showa"] .speaker, .radio[data-skin="tigerfield"] .speaker { aspect-ratio: auto; border-radius: 40px; min-height: 80px; }
+  .radio[data-skin="showa"] .grille, .radio[data-skin="tigerfield"] .grille { border-radius: 34px; }
+  .radio[data-skin="deco"] .cabinet { border-radius: 90px 90px 14px 14px; }
+  .radio[data-skin="steampunk"] .grille { width: 90px; inset: 8px auto auto 50%; }
+  .radio[data-skin="blueshield"] .cabinet { border-radius: 20px 20px 40% 40% / 20px 20px 8% 8%; }
+  .radio[data-skin="receiver"] .cabinet { padding: 14px 26px; }
+  .skin-pick select { max-width: 150px; }
+}

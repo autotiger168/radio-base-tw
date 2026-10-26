@@ -13,11 +13,29 @@ const BANDS = {
   // 網路台沒有頻率：刻度盤上依序平均排列
   NET: { min: 0, max: 1, major: 0.1, minor: 0.05, unit: "", scale: "NET 網路收聽", label: () => "", index: true },
 };
+// 機身皮膚：外觀在 css/skins.css；這裡設定每款的音效、VU 表樣式與頻譜
+//   sfx：調台音效（vintage 沙沙聲／shortwave 外差咻嗶聲／modern 短促數位聲）
+//   vu：needle 指針表／led 燈條；spectrum：喇叭區顯示即時頻譜；warm：開機真空管預熱
 const SKINS = [
-  { id: "vintage", name: "1950s 真空管" },
-  { id: "shortwave", name: "80s 短波機" },
-  { id: "modern", name: "現代科技" },
+  { id: "vintage", name: "1950s 真空管", group: "經典", sfx: "vintage", vu: "needle", warm: true },
+  { id: "shortwave", name: "80s 短波機", group: "經典", sfx: "shortwave", vu: "needle" },
+  { id: "modern", name: "現代科技", group: "經典", sfx: "modern", vu: "led", spectrum: true },
+  { id: "showa", name: "昭和電晶體機", group: "復古", sfx: "vintage", vu: "needle" },
+  { id: "taiwan70", name: "台灣懷舊客廳機", group: "復古", sfx: "vintage", vu: "needle", warm: true },
+  { id: "deco", name: "Art Deco 教堂型", group: "復古", sfx: "vintage", vu: "needle", warm: true },
+  { id: "walkman", name: "80s 隨身聽", group: "復古", sfx: "shortwave", vu: "led" },
+  { id: "military", name: "軍用通訊機", group: "專業", sfx: "shortwave", vu: "needle" },
+  { id: "receiver", name: "專業通訊接收機", group: "專業", sfx: "shortwave", vu: "led", spectrum: true },
+  { id: "crt", name: "CRT 復古電腦", group: "專業", sfx: "modern", vu: "led", spectrum: true },
+  { id: "steampunk", name: "蒸汽龐克", group: "風格", sfx: "vintage", vu: "needle", warm: true },
+  { id: "urushi", name: "和風漆器", group: "風格", sfx: "vintage", vu: "needle" },
+  { id: "nordic", name: "極簡北歐", group: "風格", sfx: "modern", vu: "led" },
+  { id: "tigerfield", name: "猛虎綠黃", group: "棒球", sfx: "shortwave", vu: "needle" },
+  { id: "bluepower", name: "電光藍", group: "棒球", sfx: "modern", vu: "led", spectrum: true },
+  { id: "blueshield", name: "藍盾護甲", group: "棒球", sfx: "modern", vu: "needle" },
+  { id: "photo", name: "我的照片（自訂）", group: "自訂", sfx: "vintage", vu: "led" },
 ];
+const skinOf = id => SKINS.find(s => s.id === id) || SKINS[0];
 const REGIONS = ["全部", "北部", "中部", "南部", "東部", "離島", "大陸"];
 
 const store = {
@@ -45,6 +63,7 @@ export class RadioUI {
     this.sfx = store.get("sfx", true);
     this.render();
     this.bind();
+    this.setSkin(this.skin);
     this.setBand(this.band, true);
     this.tick();
     setInterval(() => this.tick(), 1000);
@@ -112,9 +131,11 @@ export class RadioUI {
           </div>
         </div>
         <div class="radio-bar">
-          <div class="skin-switch" role="tablist" aria-label="機身皮膚">
-            ${SKINS.map(s => `<button role="tab" data-skin="${s.id}" aria-selected="${s.id === this.skin}">${s.name}</button>`).join("")}
-          </div>
+          <label class="skin-pick">機身
+            <select aria-label="機身皮膚">${[...new Set(SKINS.map(s => s.group))].map(g => `<optgroup label="${g}">${SKINS.filter(s => s.group === g).map(s => `<option value="${s.id}" ${s.id === this.skin ? "selected" : ""}>${s.name}</option>`).join("")}</optgroup>`).join("")}</select>
+          </label>
+          <button class="mini skin-prev" title="上一款機身">◀</button><button class="mini skin-next" title="下一款機身">▶</button>
+          <label class="mini photo-btn" hidden>🖼 換照片<input type="file" accept="image/*" hidden></label>
           <label class="region-pick">收聽地區
             <select>${REGIONS.map(r => `<option ${r === this.region ? "selected" : ""}>${r}</option>`).join("")}</select>
           </label>
@@ -133,7 +154,11 @@ export class RadioUI {
 
   bind() {
     const r = this.root;
-    r.querySelectorAll(".skin-switch button").forEach(b => b.addEventListener("click", () => this.setSkin(b.dataset.skin)));
+    r.querySelector(".skin-pick select").addEventListener("change", e => this.setSkin(e.target.value));
+    const cycle = d => { const i = SKINS.findIndex(s => s.id === this.skin); this.setSkin(SKINS[(i + d + SKINS.length) % SKINS.length].id); };
+    r.querySelector(".skin-prev").addEventListener("click", () => cycle(-1));
+    r.querySelector(".skin-next").addEventListener("click", () => cycle(1));
+    r.querySelector(".photo-btn input").addEventListener("change", e => this.loadPhoto(e.target.files[0]));
     r.querySelectorAll(".key-band").forEach(b => b.addEventListener("click", () => { this.fx("button"); this.setBand(b.dataset.band); }));
     r.querySelector(".region-pick select").addEventListener("change", e => {
       this.region = e.target.value; store.set("region", this.region); this.drawMarks();
@@ -234,11 +259,42 @@ export class RadioUI {
   fx(kind) { if (this.sfx && this.engine.ctx) this.engine.click(kind); }
 
   // ---------- 狀態 ----------
+  get skinCfg() { return skinOf(this.skin); }
+
   setSkin(id) {
+    if (!SKINS.some(s => s.id === id)) id = "vintage";
     this.skin = id; store.set("skin", id);
-    this.el.radio.dataset.skin = id;
-    this.root.querySelectorAll(".skin-switch button").forEach(b => b.setAttribute("aria-selected", b.dataset.skin === id));
+    const cfg = this.skinCfg, el = this.el.radio;
+    el.dataset.skin = id;
+    el.dataset.vu = cfg.vu;
+    el.dataset.spectrum = cfg.spectrum ? "on" : "off";
+    this.root.querySelector(".skin-pick select").value = id;
+    this.root.querySelector(".photo-btn").hidden = id !== "photo";
+    if (id === "photo") this.applyPhoto();
     this.fx("button");
+  }
+
+  // ---------- 我的照片：圖片只存在這台裝置的瀏覽器 ----------
+  applyPhoto() {
+    const url = store.get("photo", "");
+    this.el.radio.style.setProperty("--photo", url ? `url("${url}")` : "none");
+    if (!url) this.flash("按「🖼 換照片」選一張圖片當機身");
+  }
+
+  async loadPhoto(file) {
+    if (!file) return;
+    try {
+      const img = await createImageBitmap(file);
+      const k = Math.min(1, 1400 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      let q = 0.85, url = c.toDataURL("image/jpeg", q);
+      while (url.length > 1_500_000 && q > 0.4) { q -= 0.15; url = c.toDataURL("image/jpeg", q); }
+      store.set("photo", url);
+      if (store.get("photo", "") !== url) this.flash("圖片太大，瀏覽器存不下");
+      this.applyPhoto();
+    } catch { this.flash("無法讀取這張圖片"); }
   }
 
   setBand(band, silent = false) {
@@ -284,7 +340,8 @@ export class RadioUI {
     this.current = station;
     this.updateDisplay();
     if (!this.power) this.togglePower(true);
-    if (this.sfx && this.engine.ctx) this.engine.tuneNoise(this.skin === "modern" ? 300 : 650, this.skin);
+    const sfx = this.skinCfg.sfx;
+    if (this.sfx && this.engine.ctx) this.engine.tuneNoise(sfx === "modern" ? 300 : 650, sfx);
     this.onTune(station);
   }
 
@@ -293,7 +350,7 @@ export class RadioUI {
     this.el.radio.dataset.power = this.power ? "on" : "off";
     this.engine.ensureContext();
     if (this.power) {
-      if (this.skin === "vintage") this.el.radio.classList.add("warming");
+      if (this.skinCfg.warm) this.el.radio.classList.add("warming");
       setTimeout(() => this.el.radio.classList.remove("warming"), 2200);
       if (!forceOn) {
         const st = this.current || this.presetStation(1) || this.dialStations()[0];
@@ -422,7 +479,7 @@ export class RadioUI {
     this._lv[1] += (r - this._lv[1]) * 0.25;
     this.drawVU(this.el.vuL, this._lv[0], "L");
     this.drawVU(this.el.vuR, this._lv[1], "R");
-    if (this.skin === "modern") this.drawSpectrum();
+    if (this.skinCfg.spectrum) this.drawSpectrum();
     requestAnimationFrame(() => this.animate());
   }
 
@@ -433,7 +490,7 @@ export class RadioUI {
     const ink = cs.getPropertyValue("--vu-ink").trim() || "#222";
     const face = cs.getPropertyValue("--vu-face").trim() || "#f3e6c4";
     const red = cs.getPropertyValue("--vu-red").trim() || "#c0392b";
-    if (this.skin === "modern") {
+    if (this.skinCfg.vu === "led") {
       // LED 長條
       const n = 24, gap = 2, bw = (W - 20 - gap * (n - 1)) / n;
       const lit = Math.round(v * n);
