@@ -98,7 +98,7 @@ let radio, map, sw, dx, scheduler;
 function buildFilters() {
   const uniq = k => [...new Set(state.stations.map(s => s[k]).filter(Boolean))];
   const fill = (sel, vals) => { sel.innerHTML = `<option value="">全部</option>` + vals.map(v => `<option>${esc(v)}</option>`).join(""); };
-  fill($("#f-region"), ["北部", "中部", "南部", "東部", "離島", "大陸"].filter(r => uniq("region").includes(r)));
+  fill($("#f-region"), ["北部", "中部", "南部", "東部", "離島", "大陸", "日本"].filter(r => uniq("region").includes(r)));
   // 縣市選單跟著地區變：選「大陸」時只列省份
   $("#f-region").addEventListener("change", () => {
     const r = $("#f-region").value;
@@ -130,7 +130,7 @@ function applyFilters() {
 }
 
 function renderList() {
-  const rows = state.filtered.slice().sort((a, b) => a.band.localeCompare(b.band) || a.freq - b.freq);
+  const rows = state.filtered.slice().sort((a, b) => (a.geoLocked - b.geoLocked) || a.band.localeCompare(b.band) || a.freq - b.freq);   // 日本限定的台排在最後
   $("#station-list").innerHTML = rows.map(s => `
     <li class="st ${state.current?.id === s.id ? "on" : ""}" data-id="${esc(s.id)}">
       <button class="st-play" aria-label="收聽 ${esc(s.name)}">▶</button>
@@ -157,7 +157,14 @@ async function tuneTo(station) {
   radio.setStatus("尋找串流…", "");
 
   let stream = station.stream, origin = "試算表";
-  if (!stream && CONFIG.AUTO_MATCH_STREAM) {
+  if (station.geoLocked) {
+    engine.stop();
+    state.streamInfo[station.id] = { url: "", origin: "" };
+    radio.setStatus("日本境內限定", "台灣無法收聽，可換有綠點的日本台");
+    renderInfo(station);
+    return;
+  }
+  if (!stream && CONFIG.AUTO_MATCH_STREAM && station.region !== "日本") {
     const cached = matchCache.get(station.id);
     if (cached) { stream = cached.url; origin = `自動配對：${cached.name}`; }
     else {
@@ -208,7 +215,7 @@ function linkBtn(href, label, cls = "") {
 function renderInfo(s) {
   const box = $("#info");
   if (!s) {
-    box.innerHTML = `<div class="info-empty"><b>點地圖上的電台，或轉動收音機的調台旋鈕</b><span>藍色是 FM、橘色是 AM、紫色是網路台；有綠點的代表已填好串流網址。地區選「大陸」可看中國大陸各省電台。</span></div>`;
+    box.innerHTML = `<div class="info-empty"><b>點地圖上的電台，或轉動收音機的調台旋鈕</b><span>藍色是 FM、橘色是 AM、紫色是網路台；有綠點的代表已填好串流網址。地區選「大陸」可看中國大陸各省電台，選「日本」可看日本電台（灰色是日本境內限定）。</span></div>`;
     return;
   }
   const q = encodeURIComponent(s.name.replace(/\s+(台北|台中|高雄|中部|南部|宜蘭|竹苗)$/, ""));
@@ -235,10 +242,11 @@ function renderInfo(s) {
       <span class="info-freq ${s.band.toLowerCase()}">${s.band}<b>${esc(formatFreq(s).split(" ")[0])}</b><small>${esc(formatFreq(s).split(" ")[1])}</small></span>
     </div>
     ${s.sw ? `<p class="info-note">${esc(s.sw.lang)}・對${esc(s.sw.target)}廣播・發射地 ${esc(s.sw.tx)}・台灣時間 ${swTime(s.sw.row[1])}–${swTime(s.sw.row[2])}</p>` : ""}
+    ${s.geoLocked ? `<p class="info-geo">🇯🇵 這台只開放日本境內收聽（radiko、NHK らじる★らじる、JCBA 都會依 IP 判斷所在地），從台灣無法播放。<br>想聽日本的聲音，可以在地圖上找<b>有綠點</b>的日本台，或到「廣播史・日本」分頁。</p>` : ""}
     ${s.note ? `<p class="info-note">${esc(s.note)}</p>` : ""}
     ${s.verified ? "" : `<p class="info-warn">⚠ 這筆資料的頻率或所在地尚待核對，確認後請在試算表「已核對」欄填 Y。</p>`}
     <div class="links">${social}<button class="lnk log-btn" id="log-this">📒 記錄到日誌</button></div>
-    <div class="stream-box">
+    ${s.geoLocked ? "" : `<div class="stream-box">
       <div class="stream-row">
         <span>線上串流</span>
         <code>${info.url ? esc(info.origin) : (s.stream ? "試算表" : "尚未取得")}</code>
@@ -248,7 +256,7 @@ function renderInfo(s) {
       ${cands.length ? `<details><summary>其他可能的串流（${cands.length}）</summary>
         <ul class="cands">${cands.map((c, i) => `<li><button class="mini" data-cand="${i}">試聽</button> ${esc(c.name)} <small>${esc(c.codec || "")} ${c.bitrate || ""}k</small></li>`).join("")}</ul>
       </details>` : ""}
-    </div>`;
+    </div>`}`;
   $("#log-this")?.addEventListener("click", () => { dx.prefill(s); showTab("dxlog"); });
   const copy = $("#copy-url");
   if (copy) copy.addEventListener("click", async () => {

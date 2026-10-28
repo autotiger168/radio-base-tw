@@ -36,7 +36,7 @@ const SKINS = [
   { id: "photo", name: "我的照片（自訂）", group: "自訂", sfx: "vintage", vu: "led" },
 ];
 const skinOf = id => SKINS.find(s => s.id === id) || SKINS[0];
-const REGIONS = ["全部", "北部", "中部", "南部", "東部", "離島", "大陸"];
+const REGIONS = ["全部", "北部", "中部", "南部", "東部", "離島", "大陸", "日本"];
 
 const store = {
   get(k, d) { try { const v = localStorage.getItem("rbtw:" + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
@@ -314,6 +314,7 @@ export class RadioUI {
     for (const s of this.getStations()) {
       if (s.band !== this.band) continue;
       if (this.band !== "SW" && this.region !== "全部" && s.region !== this.region) continue;
+      if (s.geoLocked || (!s.freq && s.band !== "NET")) continue;   // 日本限定、沒有頻率的台不放上刻度盤
       const key = s.band === "NET" ? s.id : `${s.freq}|${s.network || s.name}`;
       const prev = seen.get(key);
       if (!prev || (!prev.stream && s.stream) || (this.current && s.id === this.current.id)) seen.set(key, s);
@@ -326,7 +327,7 @@ export class RadioUI {
     if (!list.length) return;
     let i = this.current ? list.findIndex(s => s.id === this.current.id) : -1;
     if (i === -1) {
-      const f = this.current ? this.current.freq : BANDS[this.band].min;
+      const f = this.current ? this.current.freq : this.bandCfg().min;
       i = dir > 0 ? list.findIndex(s => s.freq > f) - 1 : list.findIndex(s => s.freq >= f);
       if (i < -1) i = list.length - 1;
     }
@@ -402,7 +403,13 @@ export class RadioUI {
   showIdle() {
     this.el.bandLbl.textContent = this.band;
     this.el.num.textContent = "----";
-    this.el.unit.textContent = BANDS[this.band].unit;
+    this.el.unit.textContent = this.bandCfg().unit;
+  }
+
+  // 日本 FM 是 76–95 MHz，收聽地區選「日本」或「全部」時刻度盤往下延伸
+  bandCfg(name = this.band) {
+    const b = BANDS[name] || BANDS.FM;
+    return name === "FM" && (this.region === "日本" || this.region === "全部") ? { ...b, min: 76, max: 108, major: 4 } : b;
   }
 
   updateDisplay() {
@@ -421,7 +428,7 @@ export class RadioUI {
 
   // ---------- 刻度盤 ----------
   drawScale() {
-    const b = BANDS[this.band];
+    const b = this.bandCfg();
     let html = "";
     for (let v = Math.ceil(b.min / b.minor) * b.minor; v <= b.max + 1e-6; v += b.minor) {
       const pct = (v - b.min) / (b.max - b.min) * 100;
@@ -434,7 +441,7 @@ export class RadioUI {
 
   // 電台在刻度盤上的位置（%）
   pctOf(s, list) {
-    const b = BANDS[s.band] || BANDS.FM;
+    const b = this.bandCfg(s.band);
     if (b.index) {
       list = list || this.dialStations();
       const i = list.findIndex(x => x.id === s.id);

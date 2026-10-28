@@ -22,10 +22,10 @@ export class StationMap {
   }
 
   icon(s, active) {
-    const cls = ["pin", s.band === "AM" ? "pin-am" : s.band === "NET" ? "pin-net" : "pin-fm", s.stream ? "pin-stream" : "", active ? "pin-active" : ""].join(" ");
+    const cls = ["pin", s.band === "AM" ? "pin-am" : s.band === "NET" ? "pin-net" : "pin-fm", s.stream ? "pin-stream" : "", s.geoLocked ? "pin-geo" : "", active ? "pin-active" : ""].join(" ");
     return L.divIcon({
       className: "",
-      html: `<div class="${cls}"><span>${s.band === "NET" ? "網路" : s.band === "AM" ? Math.round(s.freq) : s.freq.toFixed(1)}</span></div>`,
+      html: `<div class="${cls}"><span>${s.band === "NET" ? "網路" : !s.freq ? s.band : s.band === "AM" ? Math.round(s.freq) : s.freq.toFixed(1)}</span></div>`,
       iconSize: [46, 22],
       iconAnchor: [23, 22],
     });

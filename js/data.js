@@ -41,6 +41,8 @@ function toStations(rows) {
     s.band = (s.band || "FM").toUpperCase();
     s.freq = parseFloat(s.freq);
     if (s.band === "NET" && isNaN(s.freq)) s.freq = 0;   // 網路台（沒有無線頻率）
+    if (s.region === "日本" && isNaN(s.freq)) s.freq = 0; // 日本社區台：頻率待補
+    s.geoLocked = s.region === "日本" && !s.stream;       // 只限日本境內收聽
     s.lat = parseFloat(s.lat);
     s.lng = parseFloat(s.lng);
     s.preset = s.preset ? parseInt(s.preset, 10) : null;
@@ -73,6 +75,7 @@ export function freqLabel(s) {
 
 export function formatFreq(s) {
   if (s.band === "NET") return "網路 收聽";
+  if (!s.freq) return s.band === "AM" ? "— kHz" : "— MHz";
   if (s.band === "SW") return `${Math.round(s.freq)} kHz`;
   return s.band === "AM" ? `${Math.round(s.freq)} kHz` : `${s.freq.toFixed(1)} MHz`;
 }

@@ -672,3 +672,9 @@ body[data-tab="dxlog"] .dock .info { flex: 1; min-width: 0; }
 .sw-tag { font-size: 11px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
 .sw-controls .chk { display: flex; align-items: center; gap: 4px; }
 .sw-controls .chk input { accent-color: #d0601c; }
+
+/* 日本：只限日本境內收聽的台（灰色） */
+.pin-geo { background: #9a978f !important; opacity: .85; }
+.pin-geo::after { border-top-color: #9a978f !important; }
+.lg.geo { background: #9a978f; }
+.info-geo { background: rgba(154,151,143,.15); border-left: 3px solid #9a978f; padding: 8px 10px; border-radius: 6px; font-size: 13px; line-height: 1.6; margin: 8px 0; }
